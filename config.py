@@ -1,10 +1,10 @@
 from enum import Enum
 
-PROJECT = "teampam-prod-7da6"
+PROJECT = "teamia-prod-df3d"
 
-DATASET = "metrics"
+DATASET = "ia_tjenester_metrikker"
 
-TABLE = "brukernotifikasjoner"
+TABLE = "IA-tjenester-metrikker"
 
 SQL_QUERY = f"SELECT  * FROM `{PROJECT}.{DATASET}.{TABLE}`"
 
