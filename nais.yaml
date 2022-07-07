@@ -1,0 +1,39 @@
+apiVersion: nais.io/v1
+kind: Naisjob
+metadata:
+  labels:
+    team: teampam
+  name: brukernotifikasjoner-datastory
+  namespace: teampam
+spec:
+  image: {{ image }}
+  ttlSecondsAfterFinished: 340
+  schedule: "0 9 * * *"
+  backoffLimit: 2
+  envFrom:
+    - secret: brukernotifikasjoner-datastory-secret
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+---
+apiVersion: nais.io/v1
+kind: Alert
+metadata:
+  name: brukernotifikasjoner-datastory
+  namespace: teampam
+  labels:
+    team: teampam
+    app: brukernotifikasjoner-datastory
+spec:
+  receivers:
+    slack:
+      channel: '#arbeidsplassen-data'
+      prependText: '<!here> | '
+  alerts:
+    - alert: Naisjob feiler
+      description: Naisjob brukernotifikasjoner-datastory feiler i namespace teampam
+      expr: 'kube_job_failed{job_name=~"^brukernotifikasjoner-datastory.*", namespace="teampam"} > 0'
+      for: 1m
+      action: "Se logger på https://logs.adeo.no -> søk etter `pod:brukernotifikasjoner-datastory AND namespace:teampam`"
+      severity: danger

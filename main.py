@@ -1,0 +1,81 @@
+import os
+import json
+import logging
+
+from typing import Sequence
+
+import pandas as pd
+
+import config
+import bq_utils
+import fetch_metrics
+import dtos
+import prepare_data
+import ds
+import secrets_handler
+
+from google.cloud.bigquery import Client
+
+
+def get_logger() -> logging.Logger:
+    _logger = logging.getLogger(name="Brukernotifkasjoner datastory")
+    _logger.setLevel(level=logging.INFO)
+
+    handler = logging.StreamHandler()
+    handler.setLevel(level=logging.INFO)
+
+    _logger.handlers = [handler]
+
+    return _logger
+
+
+def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
+    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url, token=token)
+    metrics = [dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in raw_metrics]
+
+    table = bq_utils.create_table_ref(project_id=config.PROJECT, dataset_id=config.DATASET, table_id=config.TABLE)
+    errors = bq_utils.write_to_table(client=bq_client, table=table, rows=metrics)
+
+    return errors
+
+
+def prep_data(bq_client: Client) -> pd.DataFrame:
+    query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
+    raw_data = bq_utils.format_results(query_job=query_job)
+
+    data = prepare_data.prep_data(data=raw_data)
+    return data
+
+
+def publish_datastory(data: pd.DataFrame, url: str) -> None:
+    _ds = ds.create_datastory(data=data)
+    _ds.publish(url=url)
+
+
+def update_datastory(data: pd.DataFrame, token: str, url: str) -> None:
+    _ds = ds.create_datastory(data=data)
+    _ds.update(token=token, url=url)
+
+
+if __name__ == "__main__":
+    logger = get_logger()
+
+    logger.info("Loading envs....")
+    secrets_handler.create_envs_from_secret("BRUKERNOTIFIKASJONER_ENVS")
+    logger.info("Loading envs....Done")
+
+    logger.info("Creating client....")
+    client = bq_utils.create_client(credentials=json.loads(os.environ["GOOGLE_CREDS"]))
+    logger.info("Creating client....Done")
+
+    logger.info("Loading metrics...")
+    load_metrics(bq_client=client, url=os.environ["METRICS_URL"], token=os.environ["METRICS_TOKEN"])
+    logger.info("Loading metrics...Done")
+
+    logger.info("Prepping data....")
+    prepped_data = prep_data(bq_client=client)
+    logger.info("Prepping data....Done")
+
+    logger.info("Publishing datastory....")
+    update_datastory(data=prepped_data, url=config.DATASTORY_PROD, token=os.environ["DATASTORY_TOKEN"])
+    logger.info("Publishing datastory....Done")
