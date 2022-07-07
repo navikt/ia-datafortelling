@@ -43,8 +43,12 @@ def prep_data(bq_client: Client) -> pd.DataFrame:
     query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
     raw_data = bq_utils.format_results(query_job=query_job)
 
-    data = prepare_data.prep_data(data=raw_data)
-    return data
+    df = pd.DataFrame(raw_data)
+
+
+    # data = prepare_data.prep_data(data=raw_data)
+    unikeOrgnumre = df["orgnr"].unique().size
+
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:
@@ -65,12 +69,12 @@ if __name__ == "__main__":
     logger.info("Loading envs....Done")
 
     logger.info("Creating client....")
-    client = bq_utils.create_client(credentials=json.loads(os.environ["GOOGLE_CREDS"]))
+    client = bq_utils.create_client()
     logger.info("Creating client....Done")
 
-    logger.info("Loading metrics...")
-    load_metrics(bq_client=client, url=os.environ["METRICS_URL"], token=os.environ["METRICS_TOKEN"])
-    logger.info("Loading metrics...Done")
+    # logger.info("Loading metrics...")
+    # load_metrics(bq_client=client, url=os.environ["METRICS_URL"], token=os.environ["METRICS_TOKEN"])
+    # logger.info("Loading metrics...Done")
 
     logger.info("Prepping data....")
     prepped_data = prep_data(bq_client=client)

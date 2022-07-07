@@ -1,3 +1,4 @@
+import json
 from typing import List, Sequence, Dict, Any
 
 import pandas as pd
@@ -7,8 +8,13 @@ from google.cloud.bigquery.job import QueryJob
 from google.oauth2.service_account import Credentials
 
 
-def create_client(credentials: dict) -> Client:
-    creds = Credentials.from_service_account_info(credentials)
+def create_client() -> Client:
+    secrets_file = "secrets.json"
+    envs = None
+    with open(secrets_file) as file:
+        envs = json.loads(file.read())
+
+    creds = Credentials.from_service_account_info(envs)
     client = Client(credentials=creds, project=creds.project_id)
     return client
 
