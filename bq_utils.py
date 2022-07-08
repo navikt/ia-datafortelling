@@ -14,7 +14,7 @@ def create_client() -> Client:
     with open(secrets_file) as file:
         envs = json.loads(file.read())
 
-    creds = Credentials.from_service_account_info(envs)
+    creds = Credentials.from_service_account_info(envs["google_creds"])
     client = Client(credentials=creds, project=creds.project_id)
     return client
 

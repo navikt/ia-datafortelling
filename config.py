@@ -8,6 +8,7 @@ TABLE = "IA-tjenester-metrikker"
 
 SQL_QUERY = f"SELECT  * FROM `{PROJECT}.{DATASET}.{TABLE}`"
 
+DATASTORY_DEV = "https://nada.ekstern.dev.nav.no/api"
 DATASTORY_PROD = "https://nada.intern.nav.no/api"
 
 
