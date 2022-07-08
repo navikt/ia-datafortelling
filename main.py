@@ -38,17 +38,18 @@ def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
 
     return errors
 
-
-def prep_data(bq_client: Client) -> pd.DataFrame:
+def prep_data(bq_client: Client) -> [pd.DataFrame]:
     query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
     raw_data = bq_utils.format_results(query_job=query_job)
 
     df = pd.DataFrame(raw_data)
+    df['opprettet_year'] = df['opprettet'].dt.year
+    df['opprettet_month'] = df['opprettet'].dt.month
 
+    unike_måned = df.groupby(["opprettet_year", "opprettet_month"]).nunique()
+    unike_år = df.groupby("opprettet_year").nunique()
 
-    # data = prepare_data.prep_data(data=raw_data)
-    unikeOrgnumre = df["orgnr"].unique().size
-
+    return [unike_måned, unike_år]
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:
