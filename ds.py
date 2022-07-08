@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.express as px
 import plotly.io as plio
-
 from datastory.datastory import DataStory
 
 from config import DataNewColumns, DataInColumns
@@ -21,7 +20,8 @@ def create_bar_plot(data: pd.DataFrame) -> str:
                  y=DataInColumns.COUNT.value,
                  animation_frame=DataNewColumns.LOADED_DAY_STR.value,
                  color=DataInColumns.STATUS.value,
-                 custom_data=[DataNewColumns.LOADED_DAY_STR.value, DataInColumns.STATUS.value],
+                 custom_data=[DataNewColumns.LOADED_DAY_STR.value,
+                              DataInColumns.STATUS.value],
                  width=1300,
                  height=600)
 
@@ -34,29 +34,26 @@ def create_bar_plot(data: pd.DataFrame) -> str:
         "<extra></extra>"
     ]))
     fig.update_xaxes(tickangle=45)
-    fig.update_yaxes(range=[0, 1.2*max_value])
+    fig.update_yaxes(range=[0, 1.2 * max_value])
     fig.update_layout(yaxis_title="Antall", xaxis_title="Dag")
 
     return plio.to_json(fig)
+
 
 def create_datastory(data: pd.DataFrame):
     ds = DataStory(name="Leverte IA-tjenester")
     ds.header(content="Unike bedrifter per år")
     unike_bedrifter_per_år = data["orgnr"]
     ds.markdown(md=f""" 
-    Statistikken på denne siden viser antall digitale IA-tjenester fra følgende tjenester:
-    - Samtalestøtte til arbeidsgiver
-    - Sykefraværsstatistikk til arbeidsgiver
+    Statistikken på denne siden viser antall digitale IA-tjenester. 
+    Dataregistreringen startet mars 2021.
     
-    Dataregistreringen startet mars 2021. 
-    
-    En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i tjenesten.
-    
-    Som hovedregel betyr dette at brukeren har klikket på noe, skrevet noe eller åpnet noe på siden. 
-    Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
-    
-    Vi har hatt en feil på telling av digitale IA-tjenester i perioden 19. mai til 1. juli 2022.
-    Det er ca 1000 digitale IA-tjenester som ikke er kommet med i statistikken.
+    En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i 
+    tjenesten. Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
+
+    Vi har hatt en feil på telling av digitale IA-tjenester i perioden 19. mai 
+    til 1. juli 2022. Det er ca 1000 digitale IA-tjenester som ikke er kommet 
+    med i statistikken.
                 
     - 2021: {unike_bedrifter_per_år[2021]}
     - 2022: {unike_bedrifter_per_år[2022]}
