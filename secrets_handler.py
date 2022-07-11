@@ -8,7 +8,7 @@ def create_envs_from_secret(secret_key: str):
     #with open(secrets_file) as file:
     #    envs = json.loads(file.read())
 
-    envs = json.loads(os.environ["secrets"])
+    envs = json.loads(os.environ["IA_METRIKKER_ENVS"])
 
     for key, value in envs.items():
         if isinstance(value, dict):
