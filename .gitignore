@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 
 secrets.json
+google_creds.json
+datastory_token.txt
+
 
 # IDEA
 .idea/
