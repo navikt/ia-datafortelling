@@ -10,7 +10,7 @@ spec:
   ttlSecondsAfterFinished: 340
   schedule: "*/15 * * * *"
   backoffLimit: 2
-  filesFrom:
+  envFrom:
     - secret: ia-tjenester-metrikker-datafortelling-secrets
   resources:
     limits:

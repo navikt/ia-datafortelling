@@ -3,14 +3,15 @@ import json
 
 
 def create_envs_from_secret(secret_key: str):
-    secrets_file = "/var/run/secrets/ia-tjenester-metrikker-datafortelling-secrets"
-    with open(secrets_file) as file:
-        envs = json.loads(file.read())
+    #secrets_file = "/var/run/secrets/secrets"
 
-        # envs = json.loads(os.environ[secret_key])
+    #with open(secrets_file) as file:
+    #    envs = json.loads(file.read())
 
-        for key, value in envs.items():
-            if isinstance(value, dict):
-                os.environ[key] = json.dumps(value)
-            else:
-                os.environ[key] = value
+    envs = json.loads(os.environ["secrets"])
+
+    for key, value in envs.items():
+        if isinstance(value, dict):
+            os.environ[key] = json.dumps(value)
+        else:
+            os.environ[key] = value
