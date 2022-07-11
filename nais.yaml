@@ -12,6 +12,7 @@ spec:
   backoffLimit: 2
   envFrom:
     - secret: ia-tjenester-metrikker-datafortelling-secrets
+    - optional: true
   resources:
     limits:
       cpu: 500m
