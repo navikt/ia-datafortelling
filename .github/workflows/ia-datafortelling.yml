@@ -2,9 +2,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - brukernotifikasjoner/**
-      - .github/workflow/ia-datafortelling.yml
 
 env:
   docker_image: ghcr.io/${{ github.repository }}:${{ github.sha }}
@@ -22,13 +19,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: brukernotifikasjoner/
+          context: .
           push: true
           tags: ${{ env.docker_image }}
   deploy:
     name: Deploy to NAIS
     needs: build
-    if: github.ref == 'refs/heads/Dontdeploy'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -36,5 +33,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: brukernotifikasjoner/nais.yaml
+          RESOURCE: nais.yaml
           VAR: image=${{ env.docker_image }}

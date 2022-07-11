@@ -3,7 +3,7 @@ kind: Naisjob
 metadata:
   labels:
     team: teamia
-  name: ia-tjenester-metrikker-datastory
+  name: ia-tjenester-metrikker-datafortelling
   namespace: teamia
 spec:
   image: {{ image }}
@@ -11,7 +11,7 @@ spec:
   schedule: "0 9 * * *"
   backoffLimit: 2
   envFrom:
-    - secret: ia-tjenester-metrikker-datastory-secret
+    - secret: ia-tjenester-metrikker-datafortelling-secrets
   resources:
     limits:
       cpu: 500m
@@ -20,11 +20,11 @@ spec:
 apiVersion: nais.io/v1
 kind: Alert
 metadata:
-  name: ia-tjenester-metrikker-datastory
+  name: ia-tjenester-metrikker-datafortelling
   namespace: teampam
   labels:
     team: teampam
-    app: ia-tjenester-metrikker-datastory
+    app: ia-tjenester-metrikker-datafortelling
 spec:
   receivers:
     slack:
@@ -32,8 +32,8 @@ spec:
       prependText: '<!here> | '
   alerts:
     - alert: Naisjob feiler
-      description: Naisjob ia-tjenester-metrikker-datastory feiler i namespace teamia
-      expr: 'kube_job_failed{job_name=~"^ia-tjenester-metrikker-datastory.*", namespace="teamia"} > 0'
+      description: Naisjob ia-tjenester-metrikker-datafortelling feiler i namespace teamia
+      expr: 'kube_job_failed{job_name=~"^ia-tjenester-metrikker-datafortelling.*", namespace="teamia"} > 0'
       for: 1m
-      action: "Se logger på https://logs.adeo.no -> søk etter `pod:ia-tjenester-metrikker-datastory AND namespace:teamia`"
+      action: "Se logger på https://logs.adeo.no -> søk etter `pod:ia-tjenester-metrikker-datafortelling AND namespace:teamia`"
       severity: danger
