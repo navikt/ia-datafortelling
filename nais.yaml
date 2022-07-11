@@ -21,9 +21,9 @@ apiVersion: nais.io/v1
 kind: Alert
 metadata:
   name: ia-tjenester-metrikker-datafortelling
-  namespace: teampam
+  namespace: teamia
   labels:
-    team: teampam
+    team: teamia
     app: ia-tjenester-metrikker-datafortelling
 spec:
   receivers:
