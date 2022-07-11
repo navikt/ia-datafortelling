@@ -3,7 +3,7 @@ import json
 
 
 def create_envs_from_secret(secret_key: str):
-    secrets_file = "secrets.json"
+    secrets_file = "/var/run/secrets/ia-tjenester-metrikker-datafortelling-secrets"
     with open(secrets_file) as file:
         envs = json.loads(file.read())
 
