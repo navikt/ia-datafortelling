@@ -10,8 +10,9 @@ spec:
   ttlSecondsAfterFinished: 340
   schedule: "0 9 * * *"
   backoffLimit: 2
-  envFrom:
+  filesFrom:
     - secret: ia-tjenester-metrikker-datafortelling-secrets
+      mountPath: /var/run/secrets/ia-tjenester-metrikker-datafortelling-secrets
   resources:
     limits:
       cpu: 500m
