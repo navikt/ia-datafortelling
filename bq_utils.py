@@ -2,10 +2,8 @@ import json
 from typing import List, Sequence, Dict, Any
 
 import pandas as pd
-
 from google.cloud.bigquery import Client, DatasetReference, TableReference
 from google.cloud.bigquery.job import QueryJob
-from google.oauth2.service_account import Credentials
 
 
 def create_client() -> Client:
@@ -14,18 +12,19 @@ def create_client() -> Client:
     with open(secrets_file) as file:
         envs = json.loads(file.read())
 
-    creds = Credentials.from_service_account_info(envs["google_creds"])
-    client = Client(credentials=creds, project=creds.project_id)
+    client = Client(project="teamia-prod-df3d")
     return client
 
 
-def create_table_ref(project_id: str, dataset_id: str, table_id: str) -> TableReference:
+def create_table_ref(project_id: str, dataset_id: str,
+      table_id: str) -> TableReference:
     dataset_ref = DatasetReference(project=project_id, dataset_id=dataset_id)
     table_ref = dataset_ref.table(table_id=table_id)
     return table_ref
 
 
-def write_to_table(client: Client, table: TableReference, rows: List[Dict]) -> Sequence[Dict]:
+def write_to_table(client: Client, table: TableReference, rows: List[Dict]) -> \
+Sequence[Dict]:
     errors = client.insert_rows_json(table=table, json_rows=rows)
     return errors
 
