@@ -1,4 +1,3 @@
-import logging
 import os
 
 import pandas as pd
@@ -7,19 +6,8 @@ from google.cloud.bigquery import Client
 import bq_utils
 import config
 import ds
+import logger
 import prepare_data
-
-
-def get_logger() -> logging.Logger:
-    _logger = logging.getLogger(name="ia-datafortelling logger")
-    _logger.setLevel(level=logging.INFO)
-
-    handler = logging.StreamHandler()
-    handler.setLevel(level=logging.INFO)
-
-    _logger.handlers = [handler]
-
-    return _logger
 
 
 def query_data(bq_client: Client) -> [pd.DataFrame]:
@@ -40,24 +28,25 @@ def update_datastory(data: {}, token: str, url: str) -> None:
 
 
 if __name__ == "__main__":
-    logger = get_logger()
+    logger = logger.get_logger()
 
-    logger.info("Creating client....")
+    logger.info("Creating client...")
+    exit(9)
     bq_client = bq_utils.create_client()
-    logger.info("Creating client....Done")
+    logger.info("Creating client...Done")
 
-    logger.info("Querying data....")
+    logger.info("Querying data...")
     raw_data = bq_utils.query_dataframe(client=bq_client, query=config.SQL_QUERY)
-    logger.info("Querying data....Done")
+    logger.info("Querying data...Done")
 
     logger.info("Prepping data...")
     prepped_data = prepare_data.prep_data(raw_data)
-    logger.info("Prepping data... Done")
+    logger.info("Prepping data...Done")
 
-    logger.info("Updating datastory....")
+    logger.info("Updating datastory...")
     update_datastory(
         data=prepped_data,
         url=config.DATASTORY_PROD,
-        token=os.environ["DATASTORY_TOKEN"],
+        token=os.environ[config.TOKEN_SECRET_KEY],
     )
-    logger.info("Updating datastory....Done")
+    logger.info("Updating datastory...Done")
