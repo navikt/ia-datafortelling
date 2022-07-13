@@ -38,7 +38,8 @@ def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
 
     return errors
 
-def prep_data(bq_client: Client) -> [pd.DataFrame]:
+
+def fetch_data(bq_client: Client) -> [pd.DataFrame]:
     query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
     raw_data = bq_utils.format_results(query_job=query_job)
 
@@ -69,21 +70,17 @@ def update_datastory(data: pd.DataFrame, token: str, url: str) -> None:
 if __name__ == "__main__":
     logger = get_logger()
 
-    logger.info("Loading envs....")
-    secrets_handler.create_envs_from_secret("BRUKERNOTIFIKASJONER_ENVS")
-    logger.info("Loading envs....Done")
+    # logger.info("Loading envs....")
+    # secrets_handler.create_envs_from_secret("BRUKERNOTIFIKASJONER_ENVS")
+    # logger.info("Loading envs....Done")
 
     logger.info("Creating client....")
     client = bq_utils.create_client()
     logger.info("Creating client....Done")
 
-    # logger.info("Loading metrics...")
-    # load_metrics(bq_client=client, url=os.environ["METRICS_URL"], token=os.environ["METRICS_TOKEN"])
-    # logger.info("Loading metrics...Done")
-
-    logger.info("Prepping data....")
-    prepped_data = prep_data(bq_client=client)
-    logger.info("Prepping data....Done")
+    logger.info("Fetching data....")
+    prepped_data = fetch_data(bq_client=client)
+    logger.info("Fetching data....Done")
 
     logger.info("Updating datastory....")
     update_datastory(data=prepped_data[1], url=config.DATASTORY_PROD, token=None)
