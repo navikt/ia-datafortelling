@@ -55,7 +55,7 @@ def create_bar_plot(data: pd.DataFrame) -> str:
     return plio.to_json(fig)
 
 
-def create_datastory(data: {}):
+def create_datastory(data: pd.DataFrame):
     ds = DataStory(name="Leverte IA-tjenester")
     ds.header(content="Unike bedrifter per år")
     ds.markdown(
@@ -74,6 +74,8 @@ def create_datastory(data: {}):
     - 2022: {data["unike_bedrifter_per_år"][2022]}
     """
     )
+    ds.header(content="Unike bedrifter siste 12 måneder")
+    ds.plotly(create_bar_plot(data.tail(12)))
 
     return ds
 
