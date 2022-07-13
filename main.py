@@ -59,12 +59,8 @@ def publish_datastory(data: pd.DataFrame, url: str) -> None:
 
 
 def update_datastory(data: pd.DataFrame, token: str, url: str) -> None:
-    secrets_file = "secrets.json"
-    envs = None
-    with open(secrets_file) as file:
-        envs = json.loads(file.read())
     _ds = ds.create_datastory(data=data)
-    _ds.update(token=envs["datastory_token"], url=url)
+    _ds.update(token=token, url=url)
 
 
 if __name__ == "__main__":
@@ -83,5 +79,5 @@ if __name__ == "__main__":
     logger.info("Fetching data....Done")
 
     logger.info("Updating datastory....")
-    update_datastory(data=prepped_data[1], url=config.DATASTORY_PROD, token=None)
+    update_datastory(data=prepped_data[1], url=config.DATASTORY_PROD, token=os.environ["DATASTORY_TOKEN"])
     logger.info("Updating datastory....Done")

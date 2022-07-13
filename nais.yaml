@@ -18,6 +18,8 @@ spec:
     bigQueryDatasets:
       - name: ia_tjenester_metrikker
         permission: READ
+  envFrom:
+    - secret: ia-tjenester-metrikker-datastory-secrets # value is the secret name in Google Secret Manager
 ---
 apiVersion: nais.io/v1
 kind: Alert
