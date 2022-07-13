@@ -4,9 +4,11 @@ import pandas as pd
 from google.cloud.bigquery import Client
 from google.cloud.bigquery.job import QueryJob
 
+import config
+
 
 def create_client() -> Client:
-    client = Client(project="teamia-prod-df3d")
+    client = Client(project=config.PROJECT)
     return client
 
 
