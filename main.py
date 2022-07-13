@@ -1,20 +1,15 @@
-import os
-import json
 import logging
-
+import os
 from typing import Sequence
 
 import pandas as pd
-
-import config
-import bq_utils
-import fetch_metrics
-import dtos
-import prepare_data
-import ds
-import secrets_handler
-
 from google.cloud.bigquery import Client
+
+import bq_utils
+import config
+import ds
+import dtos
+import fetch_metrics
 
 
 def get_logger() -> logging.Logger:
@@ -30,11 +25,16 @@ def get_logger() -> logging.Logger:
 
 
 def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
-    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url, token=token)
-    metrics = [dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in raw_metrics]
+    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url,
+                                                                  token=token)
+    metrics = [dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in
+               raw_metrics]
 
-    table = bq_utils.create_table_ref(project_id=config.PROJECT, dataset_id=config.DATASET, table_id=config.TABLE)
-    errors = bq_utils.write_to_table(client=bq_client, table=table, rows=metrics)
+    table = bq_utils.create_table_ref(project_id=config.PROJECT,
+                                      dataset_id=config.DATASET,
+                                      table_id=config.TABLE)
+    errors = bq_utils.write_to_table(client=bq_client, table=table,
+                                     rows=metrics)
 
     return errors
 
@@ -66,10 +66,6 @@ def update_datastory(data: pd.DataFrame, token: str, url: str) -> None:
 if __name__ == "__main__":
     logger = get_logger()
 
-    # logger.info("Loading envs....")
-    # secrets_handler.create_envs_from_secret("BRUKERNOTIFIKASJONER_ENVS")
-    # logger.info("Loading envs....Done")
-
     logger.info("Creating client....")
     client = bq_utils.create_client()
     logger.info("Creating client....Done")
@@ -79,5 +75,8 @@ if __name__ == "__main__":
     logger.info("Fetching data....Done")
 
     logger.info("Updating datastory....")
-    update_datastory(data=prepped_data[1], url=config.DATASTORY_PROD, token=os.environ["DATASTORY_TOKEN"])
+    update_datastory(
+        data=prepped_data[1],
+        url=config.DATASTORY_PROD,
+        token=os.environ["DATASTORY_TOKEN"])
     logger.info("Updating datastory....Done")

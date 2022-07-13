@@ -7,11 +7,6 @@ from google.cloud.bigquery.job import QueryJob
 
 
 def create_client() -> Client:
-    # secrets_file = "secrets.json"
-    # envs = None
-    # with open(secrets_file) as file:
-    #     envs = json.loads(file.read())
-
     client = Client(project="teamia-prod-df3d")
     return client
 
