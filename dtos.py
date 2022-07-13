@@ -36,18 +36,24 @@ class BrukerNotifikasjonerPrep:
         self.loaded_date = datetime.date.fromtimestamp(self.timestamp)
         self.loaded_date_str = self.loaded_date.strftime("%d-%m-%Y")
 
-        self.year_corrected, self.week_corrected = self._correct_week(year=self.year,
-                                                                      week=self.week,
-                                                                      correct=self.correct)
+        self.year_corrected, self.week_corrected = self._correct_week(
+            year=self.year, week=self.week, correct=self.correct
+        )
 
-        self.first_day_of_week = self._date_from_week(year=self.year_corrected, week=self.week_corrected)
-        self.week_formatted = self._format_year_week(year=self.year_corrected, week=self.week_corrected)
+        self.first_day_of_week = self._date_from_week(
+            year=self.year_corrected, week=self.week_corrected
+        )
+        self.week_formatted = self._format_year_week(
+            year=self.year_corrected, week=self.week_corrected
+        )
 
     def to_dict(self) -> dict:
         return {key: value for key, value in self.__dict__.items() if key != "correct"}
 
     @staticmethod
-    def _correct_week(year: int, week: int, correct: bool = True) -> tuple:  # [int, int]:
+    def _correct_week(
+        year: int, week: int, correct: bool = True
+    ) -> tuple:  # [int, int]:
         corrected_year = year
         corrected_week = week
 

@@ -27,4 +27,3 @@ class DataNewColumns(Enum):
     LOADED_DAY_STR = "loaded_date_str"
     FIRST_DAY_OF_WEEK = "first_day_of_week"
     FORMATTED_WEEK = "week_formatted"
-

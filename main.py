@@ -25,16 +25,15 @@ def get_logger() -> logging.Logger:
 
 
 def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
-    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url,
-                                                                  token=token)
-    metrics = [dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in
-               raw_metrics]
+    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url, token=token)
+    metrics = [
+        dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in raw_metrics
+    ]
 
-    table = bq_utils.create_table_ref(project_id=config.PROJECT,
-                                      dataset_id=config.DATASET,
-                                      table_id=config.TABLE)
-    errors = bq_utils.write_to_table(client=bq_client, table=table,
-                                     rows=metrics)
+    table = bq_utils.create_table_ref(
+        project_id=config.PROJECT, dataset_id=config.DATASET, table_id=config.TABLE
+    )
+    errors = bq_utils.write_to_table(client=bq_client, table=table, rows=metrics)
 
     return errors
 
@@ -44,8 +43,8 @@ def fetch_data(bq_client: Client) -> [pd.DataFrame]:
     raw_data = bq_utils.format_results(query_job=query_job)
 
     df = pd.DataFrame(raw_data)
-    df['opprettet_year'] = df['opprettet'].dt.year
-    df['opprettet_month'] = df['opprettet'].dt.month
+    df["opprettet_year"] = df["opprettet"].dt.year
+    df["opprettet_month"] = df["opprettet"].dt.month
 
     unike_måned = df.groupby(["opprettet_year", "opprettet_month"]).nunique()
     unike_år = df.groupby("opprettet_year").nunique()
@@ -78,5 +77,6 @@ if __name__ == "__main__":
     update_datastory(
         data=prepped_data[1],
         url=config.DATASTORY_PROD,
-        token=os.environ["DATASTORY_TOKEN"])
+        token=os.environ["DATASTORY_TOKEN"],
+    )
     logger.info("Updating datastory....Done")

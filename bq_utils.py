@@ -11,15 +11,15 @@ def create_client() -> Client:
     return client
 
 
-def create_table_ref(project_id: str, dataset_id: str,
-      table_id: str) -> TableReference:
+def create_table_ref(project_id: str, dataset_id: str, table_id: str) -> TableReference:
     dataset_ref = DatasetReference(project=project_id, dataset_id=dataset_id)
     table_ref = dataset_ref.table(table_id=table_id)
     return table_ref
 
 
-def write_to_table(client: Client, table: TableReference, rows: List[Dict]) -> \
-Sequence[Dict]:
+def write_to_table(
+    client: Client, table: TableReference, rows: List[Dict]
+) -> Sequence[Dict]:
     errors = client.insert_rows_json(table=table, json_rows=rows)
     return errors
 
