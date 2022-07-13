@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Sequence
 
 import pandas as pd
 from google.cloud.bigquery import Client
@@ -8,12 +7,11 @@ from google.cloud.bigquery import Client
 import bq_utils
 import config
 import ds
-import dtos
-import fetch_metrics
+import prepare_data
 
 
 def get_logger() -> logging.Logger:
-    _logger = logging.getLogger(name="Brukernotifkasjoner datastory")
+    _logger = logging.getLogger(name="ia-datafortelling logger")
     _logger.setLevel(level=logging.INFO)
 
     handler = logging.StreamHandler()
@@ -24,32 +22,11 @@ def get_logger() -> logging.Logger:
     return _logger
 
 
-def load_metrics(bq_client: Client, url: str, token: str) -> Sequence:
-    raw_metrics = fetch_metrics.fetch_brukernotifkasjoner_metrics(url=url, token=token)
-    metrics = [
-        dtos.BrukerNotifikasjonerMetric.from_dict(row).prep() for row in raw_metrics
-    ]
-
-    table = bq_utils.create_table_ref(
-        project_id=config.PROJECT, dataset_id=config.DATASET, table_id=config.TABLE
-    )
-    errors = bq_utils.write_to_table(client=bq_client, table=table, rows=metrics)
-
-    return errors
-
-
-def fetch_data(bq_client: Client) -> [pd.DataFrame]:
+def query_data(bq_client: Client) -> [pd.DataFrame]:
     query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
     raw_data = bq_utils.format_results(query_job=query_job)
 
-    df = pd.DataFrame(raw_data)
-    df["opprettet_year"] = df["opprettet"].dt.year
-    df["opprettet_month"] = df["opprettet"].dt.month
-
-    unike_måned = df.groupby(["opprettet_year", "opprettet_month"]).nunique()
-    unike_år = df.groupby("opprettet_year").nunique()
-
-    return [unike_måned, unike_år]
+    return pd.DataFrame(raw_data)
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:
@@ -57,7 +34,7 @@ def publish_datastory(data: pd.DataFrame, url: str) -> None:
     _ds.publish(url=url)
 
 
-def update_datastory(data: pd.DataFrame, token: str, url: str) -> None:
+def update_datastory(data: {}, token: str, url: str) -> None:
     _ds = ds.create_datastory(data=data)
     _ds.update(token=token, url=url)
 
@@ -66,16 +43,20 @@ if __name__ == "__main__":
     logger = get_logger()
 
     logger.info("Creating client....")
-    client = bq_utils.create_client()
+    bq_client = bq_utils.create_client()
     logger.info("Creating client....Done")
 
-    logger.info("Fetching data....")
-    prepped_data = fetch_data(bq_client=client)
-    logger.info("Fetching data....Done")
+    logger.info("Querying data....")
+    raw_data = bq_utils.query_dataframe(client=bq_client, query=config.SQL_QUERY)
+    logger.info("Querying data....Done")
+
+    logger.info("Prepping data...")
+    prepped_data = prepare_data.prep_data(raw_data)
+    logger.info("Prepping data... Done")
 
     logger.info("Updating datastory....")
     update_datastory(
-        data=prepped_data[1],
+        data=prepped_data,
         url=config.DATASTORY_PROD,
         token=os.environ["DATASTORY_TOKEN"],
     )

@@ -1,27 +1,13 @@
-import json
-from typing import List, Sequence, Dict, Any
+from typing import List, Dict, Any
 
 import pandas as pd
-from google.cloud.bigquery import Client, DatasetReference, TableReference
+from google.cloud.bigquery import Client
 from google.cloud.bigquery.job import QueryJob
 
 
 def create_client() -> Client:
     client = Client(project="teamia-prod-df3d")
     return client
-
-
-def create_table_ref(project_id: str, dataset_id: str, table_id: str) -> TableReference:
-    dataset_ref = DatasetReference(project=project_id, dataset_id=dataset_id)
-    table_ref = dataset_ref.table(table_id=table_id)
-    return table_ref
-
-
-def write_to_table(
-    client: Client, table: TableReference, rows: List[Dict]
-) -> Sequence[Dict]:
-    errors = client.insert_rows_json(table=table, json_rows=rows)
-    return errors
 
 
 def execute_query(client: Client, query: str) -> QueryJob:

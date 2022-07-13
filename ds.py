@@ -55,10 +55,9 @@ def create_bar_plot(data: pd.DataFrame) -> str:
     return plio.to_json(fig)
 
 
-def create_datastory(data: pd.DataFrame):
+def create_datastory(data: {}):
     ds = DataStory(name="Leverte IA-tjenester")
     ds.header(content="Unike bedrifter per år")
-    unike_bedrifter_per_år = data["orgnr"]
     ds.markdown(
         md=f""" 
     Statistikken på denne siden viser antall digitale IA-tjenester. 
@@ -71,8 +70,8 @@ def create_datastory(data: pd.DataFrame):
     til 1. juli 2022. Det er ca 1000 digitale IA-tjenester som ikke er kommet 
     med i statistikken.
                 
-    - 2021: {unike_bedrifter_per_år[2021]}
-    - 2022: {unike_bedrifter_per_år[2022]}
+    - 2021: {data["unike_bedrifter_per_år"][2021]}
+    - 2022: {data["unike_bedrifter_per_år"][2022]}
     """
     )
 
