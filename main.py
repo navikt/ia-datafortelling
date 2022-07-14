@@ -11,10 +11,7 @@ import prepare_data
 
 
 def query_data(client: Client) -> [pd.DataFrame]:
-    query_job = bq_utils.execute_query(client=client, query=config.SQL_QUERY)
-    raw_data = bq_utils.format_results(query_job=query_job)
-
-    return pd.DataFrame(raw_data)
+    return bq_utils.query_dataframe(client=client, query=config.SQL_QUERY)
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:
@@ -35,7 +32,7 @@ if __name__ == "__main__":
     logger.info("Creating client...Done")
 
     logger.info("Querying data...")
-    raw_data = bq_utils.query_dataframe(client=bq_client, query=config.SQL_QUERY)
+    raw_data = query_data(client=bq_client)
     logger.info("Querying data...Done")
 
     logger.info("Prepping data...")

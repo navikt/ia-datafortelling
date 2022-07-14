@@ -28,9 +28,10 @@ def create_datastory(data: {}):
     """
     )
     ds.header(content="Unike bedrifter siste 12 måneder")
-    ds.plotly(create_bar_plot(data["unike_bedrifter_per_måned"]["orgnr"]))
-    ds.header(content="Per applikasjon")
+    ds.plotly(create_bar_plot(data["unike_bedrifter_per_måned"]))
+    ds.header(content="Per tjeneste/applikasjon")
     ds.plotly(
-        create_bar_plot(data["per_applikasjon"].astype(str), x="Måned", y="Antall"))
+        create_bar_plot(data["per_tjeneste"], x="Tid", y="Antall", color="Tjeneste")
+    )
 
     return ds
