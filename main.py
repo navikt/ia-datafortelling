@@ -10,8 +10,10 @@ import logger
 import prepare_data
 
 
-def query_data(client: Client) -> [pd.DataFrame]:
-    return bq_utils.query_dataframe(client=client, query=config.SQL_QUERY)
+def query_data(client: Client, limit=False) -> [pd.DataFrame]:
+    return bq_utils.query_dataframe(
+        client=client, query=config.SQL_QUERY + " LIMIT 1000" if limit else ""
+    )
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:

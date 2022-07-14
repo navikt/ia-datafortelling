@@ -10,7 +10,7 @@ def prep_data(data: pd.DataFrame) -> {}:
 
     cleaned = cleaned.drop_duplicates(
         subset=["orgnr", "kilde_applikasjon", "opprettet_dato"]
-    )
+    ).sort_values(by=["opprettet_dato"])
 
     prepped = {
         "unike_bedrifter_per_år": unike_bedirfter_per_år(cleaned),
@@ -46,6 +46,5 @@ def per_tjeneste(temp):
     )
     per_app = per_app[["kilde_applikasjon", "Tid", "orgnr"]]
     per_app.columns = ["Tjeneste", "Tid", "Antall"]
-    per_app["Tid"] = per_app["Tid"].astype(str)
-    per_app["Tjeneste"] = per_app["Tjeneste"].astype(str)
-    return per_app
+
+    return per_app.astype({"Tid": str, "Tjeneste": str, "Antall": int})
