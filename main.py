@@ -12,7 +12,7 @@ import prepare_data
 
 def query_data(client: Client, limit=False) -> [pd.DataFrame]:
     return bq_utils.query_dataframe(
-        client=client, query=config.SQL_QUERY + " LIMIT 1000" if limit else ""
+        client=client, query=config.SQL_QUERY + (" LIMIT 1000" if limit else "")
     )
 
 

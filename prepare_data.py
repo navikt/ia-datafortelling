@@ -13,7 +13,7 @@ def prep_data(data: pd.DataFrame) -> {}:
     ).sort_values(by=["opprettet_dato"])
 
     prepped = {
-        "unike_bedrifter_per_år": unike_bedirfter_per_år(cleaned),
+        "unike_bedrifter_per_år": unike_bedrifter_per_år(cleaned),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(cleaned),
         "per_tjeneste": per_tjeneste(cleaned),
     }
@@ -21,7 +21,7 @@ def prep_data(data: pd.DataFrame) -> {}:
     return prepped
 
 
-def unike_bedirfter_per_år(cleaned):
+def unike_bedrifter_per_år(cleaned):
     return cleaned.groupby("opprettet_year").nunique()["orgnr"]
 
 
@@ -37,7 +37,7 @@ def unike_bedrifter_per_mnd(cleaned):
 
 def per_tjeneste(temp):
     per_app = temp.groupby(
-        ["kilde_applikasjon", "opprettet_year", "opprettet_month"], as_index=False
+        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
     ).count()
     per_app["Tid"] = (
         per_app["opprettet_month"].astype(str)
