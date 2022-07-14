@@ -46,6 +46,6 @@ if __name__ == "__main__":
     update_datastory(
         data=prepped_data,
         url=config.DATASTORY_PROD,
-        token=""#os.environ[config.TOKEN_SECRET_KEY],
+        token=os.environ[config.TOKEN_SECRET_KEY],
     )
     logger.info("Updating datastory...Done")
