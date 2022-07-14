@@ -7,12 +7,7 @@ class KibanaFormatter(logging.Formatter):
         super().__init__()
 
     def format(self, record):
-        record.msg = json.dumps(
-            {
-                "message": record.msg,
-                "level": record.levelname
-            }
-        )
+        record.msg = json.dumps({"message": record.msg, "level": record.levelname})
         return super().format(record)
 
 

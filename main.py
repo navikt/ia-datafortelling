@@ -10,8 +10,8 @@ import logger
 import prepare_data
 
 
-def query_data(bq_client: Client) -> [pd.DataFrame]:
-    query_job = bq_utils.execute_query(client=bq_client, query=config.SQL_QUERY)
+def query_data(client: Client) -> [pd.DataFrame]:
+    query_job = bq_utils.execute_query(client=client, query=config.SQL_QUERY)
     raw_data = bq_utils.format_results(query_job=query_job)
 
     return pd.DataFrame(raw_data)
@@ -31,7 +31,6 @@ if __name__ == "__main__":
     logger = logger.get_logger()
 
     logger.info("Creating client...")
-    exit(9)
     bq_client = bq_utils.create_client()
     logger.info("Creating client...Done")
 
@@ -47,6 +46,6 @@ if __name__ == "__main__":
     update_datastory(
         data=prepped_data,
         url=config.DATASTORY_PROD,
-        token=os.environ[config.TOKEN_SECRET_KEY],
+        token=""#os.environ[config.TOKEN_SECRET_KEY],
     )
     logger.info("Updating datastory...Done")

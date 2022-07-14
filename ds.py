@@ -1,11 +1,10 @@
-import pandas as pd
 import plotly.express as px
 import plotly.io as plio
 from datastory.datastory import DataStory
 
 
-def create_bar_plot(data: pd.Series) -> str:
-    fig = px.bar(data, width=1300, height=600)
+def create_bar_plot(data, **kwargs) -> str:
+    fig = px.bar(data, width=1300, height=600, **kwargs)
     return plio.to_json(fig)
 
 
@@ -30,5 +29,8 @@ def create_datastory(data: {}):
     )
     ds.header(content="Unike bedrifter siste 12 måneder")
     ds.plotly(create_bar_plot(data["unike_bedrifter_per_måned"]["orgnr"]))
+    ds.header(content="Per applikasjon")
+    ds.plotly(
+        create_bar_plot(data["per_applikasjon"].astype(str), x="Måned", y="Antall"))
 
     return ds
