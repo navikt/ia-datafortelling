@@ -6,26 +6,26 @@ def prep_data(data: pd.DataFrame) -> {}:
 
     cleaned["opprettet_year"] = cleaned["opprettet"].dt.year
     cleaned["opprettet_month"] = cleaned["opprettet"].dt.month
-    cleaned["opprettet_dato"] = cleaned["opprettet"].dt.date
+    cleaned["opprettet_date"] = cleaned["opprettet"].dt.date
 
     cleaned = cleaned.drop_duplicates(
-        subset=["orgnr", "kilde_applikasjon", "opprettet_dato"]
-    ).sort_values(by=["opprettet_dato"])
+        subset=["orgnr", "kilde_applikasjon", "opprettet_date"]
+    ).sort_values(by=["opprettet_date"])
 
     prepped = {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(cleaned),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(cleaned),
-        "per_tjeneste": per_tjeneste(cleaned),
+        "per_applikasjon": per_applikasjon(cleaned),
     }
 
     return prepped
 
 
-def unike_bedrifter_per_år(cleaned):
+def unike_bedrifter_per_år(cleaned: pd.DataFrame) -> pd.DataFrame:
     return cleaned.groupby("opprettet_year").nunique()["orgnr"]
 
 
-def unike_bedrifter_per_mnd(cleaned):
+def unike_bedrifter_per_mnd(cleaned: pd.DataFrame) -> pd.DataFrame:
     siste_12_måneder = (
         cleaned.groupby(["opprettet_year", "opprettet_month"]).nunique().tail(12)
     )
@@ -35,16 +35,16 @@ def unike_bedrifter_per_mnd(cleaned):
     return siste_12_måneder["orgnr"]
 
 
-def per_tjeneste(temp):
-    per_app = temp.groupby(
+def per_applikasjon(cleaned: pd.DataFrame) -> pd.DataFrame:
+    per_app = cleaned.groupby(
         ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
     ).count()
-    per_app["Tid"] = (
+    per_app["Måned"] = (
         per_app["opprettet_month"].astype(str)
         + "/"
         + per_app["opprettet_year"].astype(str)
     )
-    per_app = per_app[["kilde_applikasjon", "Tid", "orgnr"]]
-    per_app.columns = ["Tjeneste", "Tid", "Antall"]
+    per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
+    per_app.columns = ["Tjeneste", "Måned", "Antall"]
 
-    return per_app.astype({"Tid": str, "Tjeneste": str, "Antall": int})
+    return per_app.astype({"Måned": str, "Tjeneste": str, "Antall": int})

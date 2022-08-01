@@ -1,5 +1,3 @@
-from enum import Enum
-
 PROJECT = "teamia-prod-df3d"
 
 DATASET = "ia_tjenester_metrikker"

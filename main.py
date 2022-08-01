@@ -17,12 +17,12 @@ def query_data(client: Client, limit=False) -> [pd.DataFrame]:
 
 
 def publish_datastory(data: pd.DataFrame, url: str) -> None:
-    _ds = ds.create_datastory(data=data)
+    _ds = ds.create_datastory(preppede_data=data)
     _ds.publish(url=url)
 
 
 def update_datastory(data: {}, token: str, url: str) -> None:
-    _ds = ds.create_datastory(data=data)
+    _ds = ds.create_datastory(preppede_data=data)
     _ds.update(token=token, url=url)
 
 
