@@ -41,9 +41,9 @@ def per_applikasjon(cleaned: pd.DataFrame) -> pd.DataFrame:
         ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
     ).count()
     per_app["Måned"] = (
-            per_app["opprettet_month"].astype(str)
-            + "/"
-            + per_app["opprettet_year"].astype(str)
+        per_app["opprettet_month"].astype(str)
+        + "/"
+        + per_app["opprettet_year"].astype(str)
     )
     per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
     per_app.columns = ["Tjeneste", "Måned", "Antall"]
@@ -56,9 +56,9 @@ def antall_applikasjon_tabell(cleaned: pd.DataFrame) -> pd.DataFrame:
         ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
     ).count()
     per_app["Måned"] = (
-            per_app["opprettet_month"].astype(str)
-            + "/"
-            + per_app["opprettet_year"].astype(str)
+        per_app["opprettet_month"].astype(str)
+        + "/"
+        + per_app["opprettet_year"].astype(str)
     )
     per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
     per_app.columns = ["Tjeneste", "Måned", "Antall"]

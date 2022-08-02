@@ -16,10 +16,10 @@ def create_table(data) -> str:
 
     fig = go.Figure(data=[go.Table(
         header=dict(values=list(headers),
-                    fill_color='paleturquoise',
+                    fill_color='rgb(195, 0, 0)',
+                    font=dict(color='white', size=12),
                     align='left'),
         cells=dict(values=cells,
-                   fill_color='lavender',
                    align='left'))
     ])
 
@@ -47,11 +47,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
     """
     )
     ds.header(content="Unike bedrifter siste 12 måneder")
-    ds.plotly(
-        create_bar_plot(
-            preppede_data["unike_bedrifter_per_måned"], x="Måned", y="antall"
-        )
-    )
+    ds.plotly(create_bar_plot(preppede_data["unike_bedrifter_per_måned"]))
     ds.header(content="Per tjeneste/applikasjon graf")
     ds.plotly(
         create_bar_plot(
