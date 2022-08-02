@@ -16,6 +16,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_per_år": unike_bedrifter_per_år(cleaned),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(cleaned),
         "per_applikasjon": per_applikasjon(cleaned),
+        "antall_applikasjon_tabell": antall_applikasjon_tabell(cleaned)
     }
 
     return prepped
@@ -40,11 +41,42 @@ def per_applikasjon(cleaned: pd.DataFrame) -> pd.DataFrame:
         ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
     ).count()
     per_app["Måned"] = (
-        per_app["opprettet_month"].astype(str)
-        + "/"
-        + per_app["opprettet_year"].astype(str)
+            per_app["opprettet_month"].astype(str)
+            + "/"
+            + per_app["opprettet_year"].astype(str)
     )
     per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
     per_app.columns = ["Tjeneste", "Måned", "Antall"]
 
     return per_app.astype({"Måned": str, "Tjeneste": str, "Antall": int})
+
+
+def antall_applikasjon_tabell(cleaned: pd.DataFrame) -> pd.DataFrame:
+    per_app = cleaned.groupby(
+        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
+    ).count()
+    per_app["Måned"] = (
+            per_app["opprettet_month"].astype(str)
+            + "/"
+            + per_app["opprettet_year"].astype(str)
+    )
+    per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
+    per_app.columns = ["Tjeneste", "Måned", "Antall"]
+
+    tjenester = per_app["Tjeneste"].unique()
+    måneder = per_app["Måned"].unique()
+
+    tjeneste_dataframes = dict()
+    for tjeneste, df in per_app.groupby(["Tjeneste"]):
+        tjeneste_dataframes[tjeneste] = df.set_index("Måned")
+
+    tabell = pd.DataFrame(index=måneder, columns=tjenester)
+
+    for tjeneste in tjenester:
+        tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
+        tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
+
+    tabell.reset_index(inplace=True)
+    tabell = tabell.rename(columns={"index": "MÅNED"})
+
+    return tabell
