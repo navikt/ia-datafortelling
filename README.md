@@ -3,11 +3,11 @@
 Datafortelling
 over [leverte IA-tjenester](https://data.intern.nav.no/story/3f485566-49fc-4867-937e-618293158ef8) .
 
+## Utvikling
+
 Secrets for dette prosjektet ligger
 i [Google Secret Manager](https://console.cloud.google.com/security/secret-manager?project=teamia-prod-df3d)
 .
-
-## Utvikling
 
 Endringer i koden vil (per nå) ikke innvirke på eventuelle cronjober som allerede er satt opp. Du må
 fjerne jobben med `kubectl delete cronjob ia-datafortelling -n teamia` _før_ du pusher kode
