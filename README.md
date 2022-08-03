@@ -1,7 +1,8 @@
 # ia-datafortelling
 
-Datafortelling
-over [leverte IA-tjenester](https://data.intern.nav.no/story/3f485566-49fc-4867-937e-618293158ef8) .
+Datafortelling 
+over leverte digitale (selvbetjente) IA-tjenester. Du finner fortellingen [her](https://data.intern.nav.no/story/3f485566-49fc-4867-937e-618293158ef8)
+.
 
 ## Utvikling
 
