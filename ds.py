@@ -14,14 +14,20 @@ def create_table(data) -> str:
     for header in headers:
         cells.append(data[header].tolist())
 
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=list(headers),
-                    fill_color='rgb(195, 0, 0)',
-                    font=dict(color='white', size=12),
-                    align='left'),
-        cells=dict(values=cells,
-                   align='left'))
-    ])
+    fig = go.Figure(
+        data=[go.Table(
+            header=dict(
+                values=list(headers),
+                fill_color='rgb(195, 0, 0)',
+                font=dict(color='white', size=12),
+                align='left'),
+            cells=dict(
+                values=cells,
+                align='left'
+            )
+        )],
+        layout=go.Layout(height=600)
+    )
 
     return plio.to_json(fig)
 
