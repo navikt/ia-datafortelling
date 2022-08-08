@@ -8,7 +8,7 @@ metadata:
 spec:
   image: {{ image }}
   ttlSecondsAfterFinished: 340
-  schedule: "*/10 * * * *"
+  schedule: "*/5 * * * *"
   backoffLimit: 2
   resources:
     limits:
