@@ -9,10 +9,6 @@ Secrets for dette prosjektet ligger
 i [Google Secret Manager](https://console.cloud.google.com/security/secret-manager?project=teamia-prod-df3d)
 .
 
-Endringer i koden vil (per nå) ikke innvirke på eventuelle cronjober som allerede er satt opp. Du må
-fjerne jobben med `kubectl delete cronjob ia-datafortelling -n teamia` _før_ du pusher kode
-til `main`-branchen.
-
 ### Lokal kjøring og debugging
 
 For å debugge lokalt må du først autentisere deg med `gcloud auth login`. Brukeren din må ha
@@ -32,3 +28,7 @@ I listen over avhengigheter (`requirements.txt`) finner du en referanse til _bla
 formateringsbibliotek ala _prettier_ for Javascript. Det er anbefalt
 å [integrere dette verktøyet i IDE-en](https://black.readthedocs.io/en/stable/integrations/editors.html)
 .
+
+### Troubleshooting
+Feil: `google.auth.exceptions.DefaultCredentialsError`  
+Løsning: Kjør `gcloud auth application-default login` før `gcloud auth login`
