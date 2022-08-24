@@ -8,10 +8,10 @@ metadata:
 spec:
   image: {{ image }}
   ttlSecondsAfterFinished: 340
-  schedule: "0 2 * * *"
+  schedule: "* 7-17/1 * * *"
   backoffLimit: 2
   resources:
-    limits:
+    requests:
       cpu: 500m
       memory: 1Gi
   gcp:
