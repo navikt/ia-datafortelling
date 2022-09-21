@@ -3,16 +3,17 @@ import os
 import pandas as pd
 from google.cloud.bigquery import Client
 
-import bq_utils
+import bigquery_utils
 import config
 import ds
 import logger
 import prepare_data
 
 
-def query_data(client: Client, limit=False) -> [pd.DataFrame]:
-    return bq_utils.query_dataframe(
-        client=client, query=config.SQL_QUERY + (" LIMIT 1000" if limit else "")
+def query_data(client: Client, limit=None) -> [pd.DataFrame]:
+    return bigquery_utils.query_dataframe(
+        client=client,
+        query=config.SQL_QUERY + ("" if limit is None else f" LIMIT {limit}")
     )
 
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     logger = logger.get_logger()
 
     logger.info("Creating client...")
-    bq_client = bq_utils.create_client()
+    bq_client = bigquery_utils.create_client()
     logger.info("Creating client...Done")
 
     logger.info("Querying data...")
