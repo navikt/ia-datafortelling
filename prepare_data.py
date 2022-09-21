@@ -16,7 +16,8 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_per_år": unike_bedrifter_per_år(cleaned),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(cleaned),
         "per_applikasjon": per_applikasjon(cleaned),
-        "antall_applikasjon_tabell": antall_applikasjon_tabell(cleaned)
+        "antall_applikasjon_tabell": antall_applikasjon_tabell(cleaned),
+        "tilbakevendende_brukere": tilbakevendende_brukere(cleaned),
     }
 
     return prepped
@@ -37,14 +38,8 @@ def unike_bedrifter_per_mnd(cleaned: pd.DataFrame) -> pd.DataFrame:
 
 
 def per_applikasjon(cleaned: pd.DataFrame) -> pd.DataFrame:
-    per_app = cleaned.groupby(
-        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
-    ).count()
-    per_app["Måned"] = (
-        per_app["opprettet_month"].astype(str)
-        + "/"
-        + per_app["opprettet_year"].astype(str)
-    )
+    per_app = per_app_per_mnd(cleaned)
+    per_app["Måned"] = formater_måned(per_app)
     per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
     per_app.columns = ["Tjeneste", "Måned", "Antall"]
 
@@ -52,14 +47,8 @@ def per_applikasjon(cleaned: pd.DataFrame) -> pd.DataFrame:
 
 
 def antall_applikasjon_tabell(cleaned: pd.DataFrame) -> pd.DataFrame:
-    per_app = cleaned.groupby(
-        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
-    ).count()
-    per_app["Måned"] = (
-        per_app["opprettet_month"].astype(str)
-        + "/"
-        + per_app["opprettet_year"].astype(str)
-    )
+    per_app = per_app_per_mnd(cleaned)
+    per_app["Måned"] = formater_måned(per_app)
     per_app = per_app[["kilde_applikasjon", "Måned", "orgnr"]]
     per_app.columns = ["Tjeneste", "Måned", "Antall"]
 
@@ -76,7 +65,22 @@ def antall_applikasjon_tabell(cleaned: pd.DataFrame) -> pd.DataFrame:
         tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
         tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
 
-    tabell.reset_index(inplace=True)
-    tabell = tabell.rename(columns={"index": "MÅNED"})
+    return tabell.reset_index().rename(columns={"index": "MÅNED"})
 
-    return tabell
+
+def tilbakevendende_brukere(cleaned: pd.DataFrame):
+    pass
+
+
+def per_app_per_mnd(df: pd.DataFrame):
+    return df.groupby(
+        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
+    ).count()
+
+
+def formater_måned(df: pd.DataFrame):
+    return (
+          df["opprettet_month"].astype(str)
+          + "/"
+          + df["opprettet_year"].astype(str)
+    )
