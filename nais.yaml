@@ -13,7 +13,7 @@ spec:
   resources:
     requests:
       cpu: 500m
-      memory: 1Gi
+      memory: 250Mi
   gcp:
     bigQueryDatasets:
       - name: ia_tjenester_metrikker
