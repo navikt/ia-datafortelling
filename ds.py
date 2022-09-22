@@ -65,15 +65,15 @@ def create_datastory(preppede_data: {}) -> DataStory:
     ds.header("Andel tilbakevendende brukere")
     ds.markdown(
         md="""
-        Grafen viser prosentandel av virksomhet som har fått levert digital IA-tjeneste 
-        i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste forrige 
-        kvartal. Dette gir en indikasjon på hvor mange av virksomhetene som jobber 
-        systematisk. 
+        Grafen viser prosentandel av virksomheter som har fått levert digital 
+        IA-tjeneste i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste  
+        kvartalet før. Dette gir en indikasjon på hvor mange av virksomhetene som jobber 
+        systematisk med IA. 
         """
     )
     ds.plotly(
         create_bar_plot(
-            preppede_data["tilbakevendende_brukere"], x="Kvartal", y="Prosentandel"
+            preppede_data["tilbakevendende_brukere"], x="Kvartal", y="Prosentandel",
         )
     )
 
