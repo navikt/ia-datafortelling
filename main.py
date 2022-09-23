@@ -35,7 +35,7 @@ if __name__ == "__main__":
     logger.info("Creating client...Done")
 
     logger.info("Querying data...")
-    raw_data = query_data(client=bq_client)
+    raw_data = query_data(client=bq_client, limit=None)
     logger.info("Querying data...Done")
 
     logger.info("Prepping data...")

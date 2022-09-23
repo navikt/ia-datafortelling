@@ -37,7 +37,7 @@ def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 
 def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    antall_per_mnd = per_app_per_mnd(leverte_iatjenester).assign()
+    antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
     antall_per_mnd["Måned"] = formater_måned(antall_per_mnd)
     antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "Måned", "orgnr"]]
     antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
@@ -81,8 +81,7 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
         [
             andel_tilbakevendende(unike_per_kvartal, forrige_kvartal, gjeldende_kvartal)
             for forrige_kvartal, gjeldende_kvartal in kvartaler_til_sammenlikning
-        ],
-        columns=["Kvartal", "Prosentandel"],
+        ]
     )
 
 
@@ -90,7 +89,7 @@ def andel_tilbakevendende(
     unike_per_kvartal: pd.DataFrame,
     forrige_kvartal: pd.Period,
     gjeldende_kvartal: pd.Period,
-) -> ():
+) -> {}:
     brukere_forrige_kvartal = filtrer_på_kvartal(unike_per_kvartal, forrige_kvartal)
     brukere_dette_kvartalet = filtrer_på_kvartal(unike_per_kvartal, gjeldende_kvartal)
 
@@ -98,10 +97,12 @@ def andel_tilbakevendende(
         brukere_dette_kvartalet.isin(brukere_forrige_kvartal)
     ]
 
-    return (
-        formater_kvartal(gjeldende_kvartal),
-        len(tilbakevendende) / len(brukere_dette_kvartalet) * 100,
-    )
+    return {
+        "Kvartal": formater_kvartal(gjeldende_kvartal),
+        "Prosentandel": round(
+            len(tilbakevendende) / len(brukere_dette_kvartalet) * 100, 1
+        ),
+    }
 
 
 def filtrer_på_kvartal(df: pd.DataFrame, kvartal: pd.Period) -> pd.Series:
