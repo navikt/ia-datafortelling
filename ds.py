@@ -46,6 +46,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
 
     - 2021: {preppede_data["unike_bedrifter_per_år"][2021]}
     - 2022: {preppede_data["unike_bedrifter_per_år"][2022]}
+    - 2023: {preppede_data["unike_bedrifter_per_år"][2023]}
     
     Vi har hatt en feil på telling av digitale IA-tjenester i perioden 19. mai 
     til 1. juli 2022. Det er ca 1000 digitale IA-tjenester som ikke er kommet 
