@@ -9,6 +9,63 @@ def create_bar_plot(data, **kwargs) -> str:
     return plio.to_json(fig)
 
 
+def create_bar_plot_with_button(data, x, y1, y2, **kwargs) -> str:
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Bar(
+            visible=True,
+            x=data[x],
+            y=data[y1],
+            name=y1,
+            **kwargs
+        )
+    )
+
+    fig.add_trace(
+        go.Bar(
+            visible=False,
+            x=data[x],
+            y=data[y2],
+            name=y2,
+            **kwargs
+        )
+    )
+
+    # Add button
+    fig.update_layout(
+        width=1300,
+        height=600,
+        updatemenus=[
+            dict(
+                active=0,
+                type="buttons",
+                direction="left",
+                buttons=list([
+                    dict(
+                        args=[{"visible": [True, False]}],
+                        label=y1,
+                        method="update",
+                    ),
+                    dict(
+                        args=[{"visible": [False, True]}],
+                        label=y2,
+                        method="update",
+                    )
+                ]),
+                showactive=True,
+                xanchor="left",
+                yanchor="top",
+                x=0,
+                y=1.1,
+            ),
+        ]
+    )
+
+    return plio.to_json(fig)
+
+
 def create_table(data) -> str:
     headers = data.columns
     cells = []
