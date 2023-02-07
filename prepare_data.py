@@ -99,6 +99,7 @@ def andel_tilbakevendende(
 
     return {
         "Kvartal": formater_kvartal(gjeldende_kvartal),
+        "Antall": len(tilbakevendende),
         "Prosentandel": round(
             len(tilbakevendende) / len(brukere_dette_kvartalet) * 100, 1
         ),

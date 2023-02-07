@@ -130,8 +130,8 @@ def create_datastory(preppede_data: {}) -> DataStory:
         """
     )
     ds.plotly(
-        create_bar_plot(
-            preppede_data["tilbakevendende_brukere"], x="Kvartal", y="Prosentandel",
+        create_bar_plot_with_button(
+            preppede_data["tilbakevendende_brukere"], x="Kvartal", y1="Prosentandel", y2="Antall",
         )
     )
 
