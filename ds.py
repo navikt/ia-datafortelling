@@ -9,6 +9,11 @@ def create_bar_plot(data, **kwargs) -> str:
     return plio.to_json(fig)
 
 
+def create_line_plot(data, **kwargs) -> str:
+    fig = px.line(data, width=1300, height=600, **kwargs)
+    return plio.to_json(fig)
+
+
 def create_bar_plot_with_button(data, x, y1, y2, **kwargs) -> str:
 
     fig = go.Figure()
@@ -115,7 +120,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
     ds.plotly(create_bar_plot(preppede_data["unike_bedrifter_per_måned"]))
     ds.header(content="Leverte digitale IA-tjenester per tjeneste/applikasjon")
     ds.plotly(
-        create_bar_plot(
+        create_line_plot(
             preppede_data["per_applikasjon"], x="Måned", y="Antall", color="Tjeneste"
         )
     )
