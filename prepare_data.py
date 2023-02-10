@@ -64,6 +64,9 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
         tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
         tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
 
+    # turn table upside down
+    tabell = tabell[::-1]
+
     return tabell.reset_index().rename(columns={"index": "MÅNED"})
 
 
