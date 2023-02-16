@@ -82,29 +82,29 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
 
     return pd.DataFrame(
         [
-            andel_tilbakevendende(unike_per_kvartal, forrige_kvartal, gjeldende_kvartal)
-            for forrige_kvartal, gjeldende_kvartal in kvartaler_til_sammenlikning
+            andel_tilbakevendende(unike_per_kvartal, gjeldende_kvartal, neste_kvartal)
+            for gjeldende_kvartal, neste_kvartal in kvartaler_til_sammenlikning
         ]
     )
 
 
 def andel_tilbakevendende(
     unike_per_kvartal: pd.DataFrame,
-    forrige_kvartal: pd.Period,
     gjeldende_kvartal: pd.Period,
+    neste_kvartal: pd.Period,
 ) -> {}:
-    brukere_forrige_kvartal = filtrer_på_kvartal(unike_per_kvartal, forrige_kvartal)
-    brukere_dette_kvartalet = filtrer_på_kvartal(unike_per_kvartal, gjeldende_kvartal)
+    brukere_gjeldende_kvartal = filtrer_på_kvartal(unike_per_kvartal, gjeldende_kvartal)
+    brukere_neste_kvartal = filtrer_på_kvartal(unike_per_kvartal, neste_kvartal)
 
     tilbakevendende = unike_per_kvartal.query("kvartal == @gjeldende_kvartal")[
-        brukere_dette_kvartalet.isin(brukere_forrige_kvartal)
+        brukere_gjeldende_kvartal.isin(brukere_neste_kvartal)
     ]
 
     return {
-        "Kvartal": formater_kvartal(forrige_kvartal),
+        "Kvartal": formater_kvartal(gjeldende_kvartal),
         "Antall": len(tilbakevendende),
         "Prosentandel": round(
-            len(tilbakevendende) / len(brukere_forrige_kvartal) * 100, 1
+            len(tilbakevendende) / len(brukere_gjeldende_kvartal) * 100, 1
         ),
     }
 
