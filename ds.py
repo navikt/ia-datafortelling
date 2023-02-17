@@ -130,7 +130,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
         md="""
         Grafene viser antall og prosentandel av virksomheter som har fått levert digital 
         IA-tjeneste i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste  
-        kvartalet før. Dette gir en indikasjon på hvor mange av virksomhetene som jobber 
+        kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som jobber 
         systematisk med IA. 
         """
     )
