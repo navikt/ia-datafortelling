@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 
 def prep_data(data: pd.DataFrame) -> {}:
@@ -13,6 +14,7 @@ def prep_data(data: pd.DataFrame) -> {}:
 
     return {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(leverte_iatjenester),
+        "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
@@ -22,6 +24,26 @@ def prep_data(data: pd.DataFrame) -> {}:
 
 def unike_bedrifter_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     return leverte_iatjenester.groupby("opprettet_year").nunique()["orgnr"]
+
+
+def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+
+    første_dag_per_år = (
+        leverte_iatjenester.sort_values(by=["opprettet_date"], ascending=True)
+        .drop_duplicates(subset=["orgnr", "opprettet_year"])
+        .assign(opprettet_daymonth=leverte_iatjenester["opprettet"].apply(formater_dagmåned))
+        .filter(["opprettet_daymonth", "opprettet_year"])
+    )
+
+    # Define a common x-axis with all days in a year
+    years = første_dag_per_år.opprettet_year.unique()
+    all_days = pd.date_range(
+        datetime(years.min(), 1, 1),
+        datetime(years.max(), 12, 31),
+        freq='d'
+    ).to_series().apply(formater_dagmåned).unique()
+
+    return første_dag_per_år, all_days
 
 
 def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
@@ -125,3 +147,7 @@ def formater_måned(df: pd.DataFrame):
 
 def formater_kvartal(kvartal: pd.Period):
     return str(kvartal.year) + " Q" + str(kvartal.quarter)
+
+
+def formater_dagmåned(date: pd.Series):
+    return f"{date.day:02d}.{date.month:02d}"

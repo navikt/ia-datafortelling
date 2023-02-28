@@ -71,6 +71,33 @@ def create_bar_plot_with_button(data, x, y1, y2, **kwargs) -> str:
     return plio.to_json(fig)
 
 
+def create_cumulative_histogram(data_frame, x_col, label_col, xaxis, **kwargs):
+
+    fig = go.Figure()
+
+    for label in data_frame[label_col].unique():
+        fig.add_trace(
+            go.Histogram(
+                x=data_frame.loc[data_frame[label_col] == label, x_col],
+                name=str(label),
+                cumulative_enabled=True,
+                opacity=0.5,
+            )
+        )
+
+    fig.update_xaxes(type="category", categoryarray=xaxis)
+
+    fig.update_layout(
+        width=1300,
+        height=800,
+        barmode="overlay",
+        bargap=0,
+        **kwargs,
+    )
+
+    return plio.to_json(fig)
+
+
 def create_table(data) -> str:
     headers = data.columns
     cells = []
@@ -118,6 +145,16 @@ def create_datastory(preppede_data: {}) -> DataStory:
     )
     ds.header(content="Unike virksomheter siste 12 måneder")
     ds.plotly(create_bar_plot(preppede_data["unike_bedrifter_per_måned"]))
+    ds.header(content="Kumulativt histogram av unike virksomheter")
+    første_dag_per_år, all_days = preppede_data["unike_bedrifter_første_dag_per_år"]
+    ds.plotly(create_cumulative_histogram(
+        data_frame=første_dag_per_år,
+        x_col="opprettet_daymonth",
+        label_col="opprettet_year",
+        xaxis=all_days,
+        xaxis_title="Årets dag",
+        yaxis_title="Antall unike virksomheter",
+    ))
     ds.header(content="Leverte digitale IA-tjenester per tjeneste/applikasjon")
     ds.plotly(
         create_line_plot(
