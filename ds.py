@@ -134,7 +134,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
                 
     """
     )
-    ds.header(content="Unike virksomheter siste 12 måneder")
+    ds.header(content="Unike virksomheter per måned")
     ds.plotly(create_bar_plot(preppede_data["unike_bedrifter_per_måned"]))
     ds.header(content="Kumulativt histogram av unike virksomheter")
     første_dag_per_år, all_days = preppede_data["unike_bedrifter_første_dag_per_år"]

@@ -47,15 +47,10 @@ def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd
 
 
 def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    siste_12_måneder = (
-        leverte_iatjenester.groupby(["opprettet_year", "opprettet_month"])
-        .nunique()
-        .tail(12)
+    leverte_iatjenester["opprettet_yearmonth"] = leverte_iatjenester["opprettet"].apply(
+        lambda x: f"{x.year}/{x.month:02d}"
     )
-    siste_12_måneder.index = siste_12_måneder.index.map(
-        lambda multi_index: "{}/{}".format(multi_index[0], multi_index[1])
-    )
-    return siste_12_måneder["orgnr"]
+    return leverte_iatjenester.groupby("opprettet_yearmonth").orgnr.nunique()
 
 
 def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
