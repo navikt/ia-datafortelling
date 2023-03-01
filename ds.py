@@ -18,6 +18,7 @@ def create_bar_plot_with_button(
         list_of_series: list,
         labels: list,
         default_active=0,
+        xrangeslider=0,
         **kwargs
 ) -> str:
 
@@ -58,6 +59,19 @@ def create_bar_plot_with_button(
         ],
         **kwargs
     )
+
+    # Create slider
+    if xrangeslider:
+        fig.update_layout(
+            height=700,
+            xaxis=dict(
+                autorange=True,
+                rangeslider=dict(
+                    autorange=True,
+                    visible=True
+                )
+            )
+        )
 
     return plio.to_json(fig)
 
@@ -145,6 +159,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
         ],
         labels=["År", "Kvartal", "Måned", "Uke", "Dag"],
         default_active=2,
+        xrangeslider=1,
         yaxis_title="Antall unike virksomheter",
     ))
     ds.header(content="Kumulativt histogram av unike virksomheter")
