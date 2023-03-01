@@ -30,7 +30,6 @@ def create_bar_plot_with_button(
                 x=series.index,
                 y=series.values,
                 name=labels[i],
-                **kwargs
             )
         )
 
@@ -56,7 +55,8 @@ def create_bar_plot_with_button(
                 x=0,
                 y=1.1,
             ),
-        ]
+        ],
+        **kwargs
     )
 
     return plio.to_json(fig)
@@ -145,6 +145,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
         ],
         labels=["År", "Kvartal", "Måned", "Uke", "Dag"],
         default_active=2,
+        yaxis_title="Antall unike virksomheter",
     ))
     ds.header(content="Kumulativt histogram av unike virksomheter")
     første_dag_per_år, all_days = preppede_data["unike_bedrifter_første_dag_per_år"]
