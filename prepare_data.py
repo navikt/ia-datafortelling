@@ -18,6 +18,7 @@ def prep_data(data: pd.DataFrame) -> {}:
 
     return {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(leverte_iatjenester),
+        "unike_bedrifter_per_kvartal": unike_bedrifter_per_kvartal(leverte_iatjenester),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
         "unike_bedrifter_per_uke": unike_bedrifter_per_uke(leverte_iatjenester),
         "unike_bedrifter_per_dag": unike_bedrifter_per_dag(leverte_iatjenester),
@@ -30,6 +31,10 @@ def prep_data(data: pd.DataFrame) -> {}:
 
 def unike_bedrifter_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     return leverte_iatjenester.groupby("opprettet_year").nunique()["orgnr"]
+
+
+def unike_bedrifter_per_kvartal(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+    return leverte_iatjenester.groupby("opprettet_yearquarter").orgnr.nunique()
 
 
 def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
