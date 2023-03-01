@@ -16,8 +16,8 @@ def prep_data(data: pd.DataFrame) -> {}:
 
     return {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(leverte_iatjenester),
-        "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
+        "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
@@ -26,6 +26,10 @@ def prep_data(data: pd.DataFrame) -> {}:
 
 def unike_bedrifter_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     return leverte_iatjenester.groupby("opprettet_year").nunique()["orgnr"]
+
+
+def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+    return leverte_iatjenester.groupby("opprettet_yearmonth").orgnr.nunique()
 
 
 def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
@@ -46,10 +50,6 @@ def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd
     ).to_series().apply(formater_dagmåned).unique()
 
     return første_dag_per_år, all_days
-
-
-def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    return leverte_iatjenester.groupby("opprettet_yearmonth").orgnr.nunique()
 
 
 def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
