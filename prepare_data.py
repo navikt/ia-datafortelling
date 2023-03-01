@@ -6,9 +6,10 @@ def prep_data(data: pd.DataFrame) -> {}:
     leverte_iatjenester = (
         data.assign(
             opprettet_year=data["opprettet"].dt.year,
-            opprettet_date=data["opprettet"].dt.date,
+            opprettet_yearquarter=data["opprettet"].apply(lambda x: f"{x.year} Q{x.quarter}"),
             opprettet_yearmonth=data["opprettet"].apply(lambda x: f"{x.year}/{x.month:02d}"),
             opprettet_yearweek=data["opprettet"].apply(date_to_yearweek),
+            opprettet_date=data["opprettet"].dt.date,
         )
         .drop_duplicates(subset=["orgnr", "kilde_applikasjon", "opprettet_date"])
         .sort_values(by=["opprettet_date"])
@@ -96,11 +97,11 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
 
 
 def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
-    unike_per_kvartal = leverte_iatjenester.assign(
-        kvartal=pd.PeriodIndex(leverte_iatjenester["opprettet"], freq="Q")
-    ).drop_duplicates(subset=["orgnr", "kvartal"])
+    unike_per_kvartal = leverte_iatjenester.drop_duplicates(
+        subset=["orgnr", "opprettet_yearquarter"]
+    )
 
-    kvartaler = unike_per_kvartal["kvartal"].unique()
+    kvartaler = unike_per_kvartal["opprettet_yearquarter"].unique()
     kvartaler_til_sammenlikning = [
         (kvartaler[k - 1], kvartaler[k]) for k in range(1, len(kvartaler))
     ]
@@ -121,12 +122,12 @@ def andel_tilbakevendende(
     brukere_gjeldende_kvartal = filtrer_på_kvartal(unike_per_kvartal, gjeldende_kvartal)
     brukere_neste_kvartal = filtrer_på_kvartal(unike_per_kvartal, neste_kvartal)
 
-    tilbakevendende = unike_per_kvartal.query("kvartal == @gjeldende_kvartal")[
+    tilbakevendende = unike_per_kvartal.query("opprettet_yearquarter == @gjeldende_kvartal")[
         brukere_gjeldende_kvartal.isin(brukere_neste_kvartal)
     ]
 
     return {
-        "Kvartal": formater_kvartal(gjeldende_kvartal),
+        "Kvartal": gjeldende_kvartal,
         "Antall": len(tilbakevendende),
         "Prosentandel": round(
             len(tilbakevendende) / len(brukere_gjeldende_kvartal) * 100, 1
@@ -135,17 +136,13 @@ def andel_tilbakevendende(
 
 
 def filtrer_på_kvartal(df: pd.DataFrame, kvartal: pd.Period) -> pd.Series:
-    return df[df["kvartal"] == kvartal]["orgnr"]
+    return df[df["opprettet_yearquarter"] == kvartal]["orgnr"]
 
 
 def per_app_per_mnd(df: pd.DataFrame):
     return df.groupby(
         ["opprettet_yearmonth", "kilde_applikasjon"], as_index=False
     ).count()
-
-
-def formater_kvartal(kvartal: pd.Period):
-    return str(kvartal.year) + " Q" + str(kvartal.quarter)
 
 
 def formater_dagmåned(date: pd.Series):
