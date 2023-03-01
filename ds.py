@@ -14,29 +14,25 @@ def create_line_plot(data, **kwargs) -> str:
     return plio.to_json(fig)
 
 
-def create_bar_plot_with_button(data, x, y1, y2, **kwargs) -> str:
+def create_bar_plot_with_button(
+        list_of_series: list,
+        labels: list,
+        default_active=0,
+        **kwargs
+) -> str:
 
     fig = go.Figure()
 
-    fig.add_trace(
-        go.Bar(
-            visible=True,
-            x=data[x],
-            y=data[y1],
-            name=y1,
-            **kwargs
+    for i, series in enumerate(list_of_series):
+        fig.add_trace(
+            go.Bar(
+                visible=(i == default_active),
+                x=series.index,
+                y=series.values,
+                name=labels[i],
+                **kwargs
+            )
         )
-    )
-
-    fig.add_trace(
-        go.Bar(
-            visible=False,
-            x=data[x],
-            y=data[y2],
-            name=y2,
-            **kwargs
-        )
-    )
 
     # Add button
     fig.update_layout(
@@ -44,21 +40,16 @@ def create_bar_plot_with_button(data, x, y1, y2, **kwargs) -> str:
         height=600,
         updatemenus=[
             dict(
-                active=0,
+                active=default_active,
                 type="buttons",
                 direction="left",
-                buttons=list([
+                buttons=[
                     dict(
-                        args=[{"visible": [True, False]}],
-                        label=y1,
+                        args=[{"visible": [(i == i0) for i0, label in enumerate(labels)]}],
+                        label=label,
                         method="update",
-                    ),
-                    dict(
-                        args=[{"visible": [False, True]}],
-                        label=y2,
-                        method="update",
-                    )
-                ]),
+                    ) for i, label in enumerate(labels)
+                ],
                 showactive=True,
                 xanchor="left",
                 yanchor="top",
@@ -173,7 +164,11 @@ def create_datastory(preppede_data: {}) -> DataStory:
     )
     ds.plotly(
         create_bar_plot_with_button(
-            preppede_data["tilbakevendende_brukere"], x="Kvartal", y1="Prosentandel", y2="Antall",
+            list_of_series=[
+                preppede_data["tilbakevendende_brukere"].Prosentandel,
+                preppede_data["tilbakevendende_brukere"].Antall,
+            ],
+            labels=["Prosentandel", "Antall"],
         )
     )
 

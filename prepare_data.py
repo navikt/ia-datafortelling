@@ -107,7 +107,7 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
             andel_tilbakevendende(unike_per_kvartal, gjeldende_kvartal, neste_kvartal)
             for gjeldende_kvartal, neste_kvartal in kvartaler_til_sammenlikning
         ]
-    )
+    ).set_index("Kvartal")
 
 
 def andel_tilbakevendende(
