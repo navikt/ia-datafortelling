@@ -4,9 +4,11 @@ from datetime import datetime
 
 def prep_data(data: pd.DataFrame) -> {}:
     leverte_iatjenester = (
-        data.assign(opprettet_year=data["opprettet"].dt.year)
-        .assign(opprettet_month=data["opprettet"].dt.month)
-        .assign(opprettet_date=data["opprettet"].dt.date)
+        data.assign(
+            opprettet_year=data["opprettet"].dt.year,
+            opprettet_date=data["opprettet"].dt.date,
+            opprettet_yearmonth=data["opprettet"].apply(lambda x: f"{x.year}/{x.month:02d}"),
+        )
         .drop_duplicates(subset=["orgnr", "kilde_applikasjon", "opprettet_date"])
         .sort_values(by=["opprettet_date"])
         .reset_index()
@@ -47,16 +49,12 @@ def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd
 
 
 def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    leverte_iatjenester["opprettet_yearmonth"] = leverte_iatjenester["opprettet"].apply(
-        lambda x: f"{x.year}/{x.month:02d}"
-    )
     return leverte_iatjenester.groupby("opprettet_yearmonth").orgnr.nunique()
 
 
 def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd["Måned"] = formater_måned(antall_per_mnd)
-    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "Måned", "orgnr"]]
+    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]]
     antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
 
     return antall_per_mnd.astype({"Måned": str, "Tjeneste": str, "Antall": int})
@@ -64,8 +62,7 @@ def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd["Måned"] = formater_måned(antall_per_mnd)
-    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "Måned", "orgnr"]]
+    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]]
     antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
 
     tjenester = antall_per_mnd["Tjeneste"].unique()
@@ -132,12 +129,8 @@ def filtrer_på_kvartal(df: pd.DataFrame, kvartal: pd.Period) -> pd.Series:
 
 def per_app_per_mnd(df: pd.DataFrame):
     return df.groupby(
-        ["opprettet_year", "opprettet_month", "kilde_applikasjon"], as_index=False
+        ["opprettet_yearmonth", "kilde_applikasjon"], as_index=False
     ).count()
-
-
-def formater_måned(df: pd.DataFrame):
-    return df["opprettet_month"].astype(str) + "/" + df["opprettet_year"].astype(str)
 
 
 def formater_kvartal(kvartal: pd.Period):
