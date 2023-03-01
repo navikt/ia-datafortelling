@@ -8,6 +8,7 @@ def prep_data(data: pd.DataFrame) -> {}:
             opprettet_year=data["opprettet"].dt.year,
             opprettet_date=data["opprettet"].dt.date,
             opprettet_yearmonth=data["opprettet"].apply(lambda x: f"{x.year}/{x.month:02d}"),
+            opprettet_yearweek=data["opprettet"].apply(date_to_yearweek),
         )
         .drop_duplicates(subset=["orgnr", "kilde_applikasjon", "opprettet_date"])
         .sort_values(by=["opprettet_date"])
@@ -17,6 +18,8 @@ def prep_data(data: pd.DataFrame) -> {}:
     return {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(leverte_iatjenester),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
+        "unike_bedrifter_per_uke": unike_bedrifter_per_uke(leverte_iatjenester),
+        "unike_bedrifter_per_dag": unike_bedrifter_per_dag(leverte_iatjenester),
         "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
@@ -30,6 +33,14 @@ def unike_bedrifter_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 def unike_bedrifter_per_mnd(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     return leverte_iatjenester.groupby("opprettet_yearmonth").orgnr.nunique()
+
+
+def unike_bedrifter_per_uke(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+    return leverte_iatjenester.groupby("opprettet_yearweek").orgnr.nunique()
+
+
+def unike_bedrifter_per_dag(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+    return leverte_iatjenester.groupby("opprettet_date").orgnr.nunique()
 
 
 def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
@@ -139,3 +150,16 @@ def formater_kvartal(kvartal: pd.Period):
 
 def formater_dagmåned(date: pd.Series):
     return f"{date.day:02d}.{date.month:02d}"
+
+
+def date_to_yearweek(date: datetime.date) -> str:
+    year = date.year
+    month = date.month
+    week = date.isocalendar().week
+
+    if (month == 1) & (week >= 52):
+        year -= 1
+    elif (month == 12) & (week == 1):
+        year += 1
+
+    return f"{year} U{week:02d}"
