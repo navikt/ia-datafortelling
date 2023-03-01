@@ -134,8 +134,18 @@ def create_datastory(preppede_data: {}) -> DataStory:
                 
     """
     )
-    ds.header(content="Unike virksomheter per måned")
-    ds.plotly(create_bar_plot(preppede_data["unike_bedrifter_per_måned"]))
+    ds.header(content="Unike virksomheter")
+    ds.plotly(create_bar_plot_with_button(
+        [
+            preppede_data["unike_bedrifter_per_år"],
+            preppede_data["unike_bedrifter_per_kvartal"],
+            preppede_data["unike_bedrifter_per_måned"],
+            preppede_data["unike_bedrifter_per_uke"],
+            preppede_data["unike_bedrifter_per_dag"],
+        ],
+        labels=["År", "Kvartal", "Måned", "Uke", "Dag"],
+        default_active=2,
+    ))
     ds.header(content="Kumulativt histogram av unike virksomheter")
     første_dag_per_år, all_days = preppede_data["unike_bedrifter_første_dag_per_år"]
     ds.plotly(create_cumulative_histogram(
