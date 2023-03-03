@@ -157,7 +157,7 @@ def formater_dagmåned(date: pd.Series):
 def date_to_yearweek(date: datetime.date) -> str:
     year = date.year
     month = date.month
-    week = date.isocalendar().week
+    week = int(date.strftime("%V"))
 
     if (month == 1) & (week >= 52):
         year -= 1
