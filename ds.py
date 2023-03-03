@@ -44,11 +44,15 @@ def create_bar_plot_with_button(
                 type="buttons",
                 direction="left",
                 buttons=[
+                    # One dict for each button, indicating which trace/graf to show
+                    # Parameter visible is True for the respective button, and False for the remaining
+                    # Example with three buttons:
+                    # [True, False, False], [False, True, False], [False, False, True]
                     dict(
-                        args=[{"visible": [(i == i0) for i0, label in enumerate(labels)]}],
+                        args=[{"visible": [button_i == button for button_i, label_i in enumerate(labels)]}],
                         label=label,
                         method="update",
-                    ) for i, label in enumerate(labels)
+                    ) for button, label in enumerate(labels)
                 ],
                 showactive=True,
                 xanchor="left",
