@@ -195,6 +195,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
                 preppede_data["tilbakevendende_brukere"].Antall,
             ],
             labels=["Prosentandel", "Antall"],
+            xaxis_title="Kvartal",
         )
     )
 
