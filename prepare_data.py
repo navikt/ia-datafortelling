@@ -11,8 +11,12 @@ def prep_data(data: pd.DataFrame) -> {}:
             opprettet_yearweek=data["opprettet"].apply(date_to_yearweek),
             opprettet_date=data["opprettet"].dt.date,
         )
+        # Vi sorterer etter dato og form av tjeneste så vi beholder interaksjons over
+        # informasjonstjeneste med bruk av "drop_duplicates".
+        # Hver gang vi leverer en interaksjonstjeneste i forebygginsplan, leverer vi
+        # også en informasjonstjeneste (vi må åpne et kort for å utføre oppgaver).
+        .sort_values(by=["opprettet_date", "form_av_tjeneste"], ascending=[True, False])
         .drop_duplicates(subset=["orgnr", "kilde_applikasjon", "opprettet_date"])
-        .sort_values(by=["opprettet_date"])
         .reset_index()
     )
 
@@ -25,6 +29,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
+        "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN"),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
     }
 
@@ -99,6 +104,11 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     tabell = tabell[::-1]
 
     return tabell.reset_index().rename(columns={"index": "MÅNED"})
+
+
+def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str):
+    filter_tjeneste = (leverte_iatjenester.kilde_applikasjon == tjeneste)
+    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts()
 
 
 def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
