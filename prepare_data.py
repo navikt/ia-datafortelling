@@ -30,6 +30,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
         "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN"),
+        "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
     }
 
@@ -106,9 +107,9 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     return tabell.reset_index().rename(columns={"index": "MÅNED"})
 
 
-def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str):
+def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False):
     filter_tjeneste = (leverte_iatjenester.kilde_applikasjon == tjeneste)
-    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts()
+    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts(normalize=andel)
 
 
 def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):

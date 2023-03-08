@@ -185,7 +185,14 @@ def create_datastory(preppede_data: {}) -> DataStory:
     ds.plotly(create_table(preppede_data["antall_applikasjon_tabell"]))
     ds.header("Informasjons- vs. interaksjonstjeneste i forebyggingsplan")
     ds.plotly(
-        create_bar_plot(preppede_data["antall_form_av_tjeneste_plan"])
+        create_bar_plot_with_button(
+            list_of_series=[
+                100*preppede_data["andel_form_av_tjeneste_plan"],
+                preppede_data["antall_form_av_tjeneste_plan"],
+            ],
+            labels=["Prosentandel", "Antall"],
+            xaxis_title="Form av tjeneste",
+        )
     )
     ds.header("Tilbakevendende brukere")
     ds.markdown(
