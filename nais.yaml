@@ -17,23 +17,25 @@ spec:
   envFrom:
     - secret: ia-tjenester-metrikker-datastory-secrets # value is the secret name in Google Secret Manager
 ---
-apiVersion: nais.io/v1
-kind: Alert
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
 metadata:
-  name: ia-datafortelling
+  name: ia-datafortelling-alerts
   namespace: teamia
   labels:
     team: teamia
     app: ia-datafortelling
 spec:
-  receivers:
-    slack:
-      channel: '#arbeidsgiver-teamia-alerts'
-      prependText: '<!here> | '
-  alerts:
-    - alert: Naisjob feiler
-      description: Naisjob ia-datafortelling feiler i namespace teamia
-      expr: 'kube_job_failed{job_name=~"^ia-datafortelling.*", namespace="teamia"} > 0'
-      for: 1m
-      action: "Se logger på https://logs.adeo.no -> søk etter `pod:ia-datafortelling AND namespace:teamia`"
-      severity: danger
+  groups:
+    - name: ia-datafortelling-alerts
+      rules:
+        - alert: NaisjobFeilet
+          expr: kube_job_failed{job_name=~"^ia-datafortelling.*", namespace="teamia"} > 0
+          for: 10m
+          annotations:
+            consequence: Datafortellingen ble ikke oppdatert
+            action: |-
+              Se logger på https://logs.adeo.no -> søk etter `pod:ia-datafortelling AND namespace:teamia`
+          labels:
+            namespace: teamia
+            severity: warning
