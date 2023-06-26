@@ -6,7 +6,7 @@ TABLE = "IA-tjenester-metrikker"
 
 SQL_QUERY = f"SELECT  * FROM `{PROJECT}.{DATASET}.{TABLE}`"
 
-DATASTORY_DEV = "https://nada.ekstern.dev.nav.no/api"
+DATASTORY_DEV = "https://nada.dev.intern.nav.no/api"
 DATASTORY_PROD = "https://nada.intern.nav.no/api"
 
 TOKEN_SECRET_KEY = "DATASTORY_TOKEN"
