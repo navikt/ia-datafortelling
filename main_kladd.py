@@ -24,6 +24,6 @@ if __name__ == "__main__":
     logger.info("Publishing datastory...")
     publish_datastory(
         data=prepped_data,
-        url=config.DATASTORY_DEV,
+        url=config.DATASTORY_PROD,
     )
     logger.info("Publishing datastory...Done")
