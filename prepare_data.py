@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def prep_data(data: pd.DataFrame) -> {}:
@@ -29,6 +29,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
+        "antall_applikasjon_tabell_siste_30_dager": antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester),
         "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN"),
         "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
@@ -105,6 +106,35 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     tabell = tabell[::-1]
 
     return tabell.reset_index().rename(columns={"index": "MÅNED"})
+
+
+def antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+    now = datetime.now()
+    antall_per_dag = leverte_iatjenester[
+        leverte_iatjenester.opprettet > now - timedelta(days=30)
+    ].groupby(
+        ["opprettet_date", "kilde_applikasjon"], as_index=False
+    ).count()
+    antall_per_dag = antall_per_dag[["kilde_applikasjon", "opprettet_date", "orgnr"]]
+    antall_per_dag.columns = ["Tjeneste", "Dag", "Antall"]
+
+    tjenester = antall_per_dag["Tjeneste"].unique()
+    dager = antall_per_dag["Dag"].unique()
+
+    tjeneste_dataframes = dict()
+    for tjeneste, antall_per_dag in antall_per_dag.groupby(["Tjeneste"]):
+        tjeneste_dataframes[tjeneste] = antall_per_dag.set_index("Dag")
+
+    tabell = pd.DataFrame(index=dager, columns=tjenester)
+
+    for tjeneste in tjenester:
+        tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
+        tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
+
+    # turn table upside down
+    tabell = tabell[::-1]
+
+    return tabell.reset_index().rename(columns={"index": "DAG"})
 
 
 def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False):

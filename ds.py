@@ -183,6 +183,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
         )
     )
     ds.plotly(create_table(preppede_data["antall_applikasjon_tabell"]))
+    ds.plotly(create_table(preppede_data["antall_applikasjon_tabell_siste_30_dager"]))
     ds.header("Informasjons- vs. interaksjonstjeneste i forebyggingsplan")
     ds.plotly(
         create_bar_plot_with_button(
