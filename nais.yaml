@@ -14,7 +14,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: nada.dev.intern.nav.no # for dev
+        - host: nada.intern.dev.nav.no # for dev
         - host: nada.intern.nav.no # for prod
   gcp:
     bigQueryDatasets:
