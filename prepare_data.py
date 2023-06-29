@@ -6,8 +6,12 @@ def prep_data(data: pd.DataFrame) -> {}:
     leverte_iatjenester = (
         data.assign(
             opprettet_year=data["opprettet"].dt.year,
-            opprettet_yearquarter=data["opprettet"].apply(lambda x: f"{x.year} Q{x.quarter}"),
-            opprettet_yearmonth=data["opprettet"].apply(lambda x: f"{x.year}/{x.month:02d}"),
+            opprettet_yearquarter=data["opprettet"].apply(
+                lambda x: f"{x.year} Q{x.quarter}"
+            ),
+            opprettet_yearmonth=data["opprettet"].apply(
+                lambda x: f"{x.year}/{x.month:02d}"
+            ),
             opprettet_yearweek=data["opprettet"].apply(date_to_yearweek),
             opprettet_date=data["opprettet"].dt.date,
         )
@@ -26,12 +30,20 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
         "unike_bedrifter_per_uke": unike_bedrifter_per_uke(leverte_iatjenester),
         "unike_bedrifter_per_dag": unike_bedrifter_per_dag(leverte_iatjenester),
-        "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(leverte_iatjenester),
+        "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(
+            leverte_iatjenester
+        ),
         "per_applikasjon": per_applikasjon(leverte_iatjenester),
         "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
-        "antall_applikasjon_tabell_siste_30_dager": antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester),
-        "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN"),
-        "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True),
+        "antall_applikasjon_tabell_siste_30_dager": antall_applikasjon_tabell_siste_30_dager(
+            leverte_iatjenester
+        ),
+        "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(
+            leverte_iatjenester, "FOREBYGGINGSPLAN"
+        ),
+        "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(
+            leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True
+        ),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
     }
 
@@ -56,29 +68,37 @@ def unike_bedrifter_per_dag(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     return leverte_iatjenester.groupby("opprettet_date").orgnr.nunique()
 
 
-def unike_bedrifter_første_dag_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-
+def unike_bedrifter_første_dag_per_år(
+    leverte_iatjenester: pd.DataFrame,
+) -> pd.DataFrame:
     første_dag_per_år = (
         leverte_iatjenester.sort_values(by=["opprettet_date"], ascending=True)
         .drop_duplicates(subset=["orgnr", "opprettet_year"])
-        .assign(opprettet_daymonth=leverte_iatjenester["opprettet"].apply(formater_dagmåned))
+        .assign(
+            opprettet_daymonth=leverte_iatjenester["opprettet"].apply(formater_dagmåned)
+        )
         .filter(["opprettet_daymonth", "opprettet_year"])
     )
 
     # Define a common x-axis with all days in a year
     years = første_dag_per_år.opprettet_year.unique()
-    all_days = pd.date_range(
-        datetime(years.min(), 1, 1),
-        datetime(years.max(), 12, 31),
-        freq='d'
-    ).to_series().apply(formater_dagmåned).unique()
+    all_days = (
+        pd.date_range(
+            datetime(years.min(), 1, 1), datetime(years.max(), 12, 31), freq="d"
+        )
+        .to_series()
+        .apply(formater_dagmåned)
+        .unique()
+    )
 
     return første_dag_per_år, all_days
 
 
 def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]]
+    antall_per_mnd = antall_per_mnd[
+        ["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]
+    ]
     antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
 
     return antall_per_mnd.astype({"Måned": str, "Tjeneste": str, "Antall": int})
@@ -86,7 +106,9 @@ def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
     antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd = antall_per_mnd[["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]]
+    antall_per_mnd = antall_per_mnd[
+        ["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]
+    ]
     antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
 
     tjenester = antall_per_mnd["Tjeneste"].unique()
@@ -105,20 +127,18 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     # turn table upside down
     tabell = tabell[::-1]
 
-    return (
-        tabell.sort_index(axis=1)
-        .reset_index()
-        .rename(columns={"index": "MÅNED"})
-    )
+    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "MÅNED"})
 
 
-def antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
+def antall_applikasjon_tabell_siste_30_dager(
+    leverte_iatjenester: pd.DataFrame,
+) -> pd.DataFrame:
     now = datetime.now()
-    antall_per_dag = leverte_iatjenester[
-        leverte_iatjenester.opprettet > now - timedelta(days=30)
-    ].groupby(
-        ["opprettet_date", "kilde_applikasjon"], as_index=False
-    ).count()
+    antall_per_dag = (
+        leverte_iatjenester[leverte_iatjenester.opprettet > now - timedelta(days=30)]
+        .groupby(["opprettet_date", "kilde_applikasjon"], as_index=False)
+        .count()
+    )
     antall_per_dag = antall_per_dag[["kilde_applikasjon", "opprettet_date", "orgnr"]]
     antall_per_dag.columns = ["Tjeneste", "Dag", "Antall"]
 
@@ -138,16 +158,16 @@ def antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester: pd.DataFrame) 
     # turn table upside down
     tabell = tabell[::-1]
 
-    return (
-        tabell.sort_index(axis=1)
-        .reset_index()
-        .rename(columns={"index": "DAG"}) 
+    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "DAG"})
+
+
+def count_per_form_av_tjeneste(
+    leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False
+):
+    filter_tjeneste = leverte_iatjenester.kilde_applikasjon == tjeneste
+    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts(
+        normalize=andel
     )
-
-
-def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False):
-    filter_tjeneste = (leverte_iatjenester.kilde_applikasjon == tjeneste)
-    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts(normalize=andel)
 
 
 def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
@@ -176,9 +196,9 @@ def andel_tilbakevendende(
     brukere_gjeldende_kvartal = filtrer_på_kvartal(unike_per_kvartal, gjeldende_kvartal)
     brukere_neste_kvartal = filtrer_på_kvartal(unike_per_kvartal, neste_kvartal)
 
-    tilbakevendende = unike_per_kvartal.query("opprettet_yearquarter == @gjeldende_kvartal")[
-        brukere_gjeldende_kvartal.isin(brukere_neste_kvartal)
-    ]
+    tilbakevendende = unike_per_kvartal.query(
+        "opprettet_yearquarter == @gjeldende_kvartal"
+    )[brukere_gjeldende_kvartal.isin(brukere_neste_kvartal)]
 
     return {
         "Kvartal": gjeldende_kvartal,

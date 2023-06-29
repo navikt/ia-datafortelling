@@ -15,13 +15,8 @@ def create_line_plot(data, **kwargs) -> str:
 
 
 def create_bar_plot_with_button(
-        list_of_series: list,
-        labels: list,
-        default_active=0,
-        xrangeslider=0,
-        **kwargs
+    list_of_series: list, labels: list, default_active=0, xrangeslider=0, **kwargs
 ) -> str:
-
     fig = go.Figure()
 
     for i, series in enumerate(list_of_series):
@@ -49,10 +44,18 @@ def create_bar_plot_with_button(
                     # Example with three buttons:
                     # [True, False, False], [False, True, False], [False, False, True]
                     dict(
-                        args=[{"visible": [button_i == button for button_i, label_i in enumerate(labels)]}],
+                        args=[
+                            {
+                                "visible": [
+                                    button_i == button
+                                    for button_i, label_i in enumerate(labels)
+                                ]
+                            }
+                        ],
                         label=label,
                         method="update",
-                    ) for button, label in enumerate(labels)
+                    )
+                    for button, label in enumerate(labels)
                 ],
                 showactive=True,
                 xanchor="left",
@@ -61,27 +64,20 @@ def create_bar_plot_with_button(
                 y=1.1,
             ),
         ],
-        **kwargs
+        **kwargs,
     )
 
     # Create slider
     if xrangeslider:
         fig.update_layout(
             height=700,
-            xaxis=dict(
-                autorange=True,
-                rangeslider=dict(
-                    autorange=True,
-                    visible=True
-                )
-            )
+            xaxis=dict(autorange=True, rangeslider=dict(autorange=True, visible=True)),
         )
 
     return plio.to_json(fig)
 
 
 def create_cumulative_histogram(data_frame, x_col, label_col, xaxis, **kwargs):
-
     fig = go.Figure()
 
     for label in data_frame[label_col].unique():
@@ -153,29 +149,33 @@ def create_datastory(preppede_data: {}) -> DataStory:
     """
     )
     ds.header(content="Unike virksomheter")
-    ds.plotly(create_bar_plot_with_button(
-        [
-            preppede_data["unike_bedrifter_per_år"],
-            preppede_data["unike_bedrifter_per_kvartal"],
-            preppede_data["unike_bedrifter_per_måned"],
-            preppede_data["unike_bedrifter_per_uke"],
-            preppede_data["unike_bedrifter_per_dag"],
-        ],
-        labels=["År", "Kvartal", "Måned", "Uke", "Dag"],
-        default_active=2,
-        xrangeslider=1,
-        yaxis_title="Antall unike virksomheter",
-    ))
+    ds.plotly(
+        create_bar_plot_with_button(
+            [
+                preppede_data["unike_bedrifter_per_år"],
+                preppede_data["unike_bedrifter_per_kvartal"],
+                preppede_data["unike_bedrifter_per_måned"],
+                preppede_data["unike_bedrifter_per_uke"],
+                preppede_data["unike_bedrifter_per_dag"],
+            ],
+            labels=["År", "Kvartal", "Måned", "Uke", "Dag"],
+            default_active=2,
+            xrangeslider=1,
+            yaxis_title="Antall unike virksomheter",
+        )
+    )
     ds.header(content="Kumulativt histogram av unike virksomheter")
     første_dag_per_år, all_days = preppede_data["unike_bedrifter_første_dag_per_år"]
-    ds.plotly(create_cumulative_histogram(
-        data_frame=første_dag_per_år,
-        x_col="opprettet_daymonth",
-        label_col="opprettet_year",
-        xaxis=all_days,
-        xaxis_title="Årets dag",
-        yaxis_title="Antall unike virksomheter",
-    ))
+    ds.plotly(
+        create_cumulative_histogram(
+            data_frame=første_dag_per_år,
+            x_col="opprettet_daymonth",
+            label_col="opprettet_year",
+            xaxis=all_days,
+            xaxis_title="Årets dag",
+            yaxis_title="Antall unike virksomheter",
+        )
+    )
     ds.header(content="Leverte digitale IA-tjenester per tjeneste/applikasjon")
     ds.plotly(
         create_line_plot(
@@ -188,7 +188,7 @@ def create_datastory(preppede_data: {}) -> DataStory:
     ds.plotly(
         create_bar_plot_with_button(
             list_of_series=[
-                100*preppede_data["andel_form_av_tjeneste_plan"],
+                100 * preppede_data["andel_form_av_tjeneste_plan"],
                 preppede_data["antall_form_av_tjeneste_plan"],
             ],
             labels=["Prosentandel", "Antall"],

@@ -13,7 +13,7 @@ import prepare_data
 def query_data(client: Client, limit=None) -> [pd.DataFrame]:
     return bigquery_utils.query_dataframe(
         client=client,
-        query=config.SQL_QUERY + ("" if limit is None else f" LIMIT {limit}")
+        query=config.SQL_QUERY + ("" if limit is None else f" LIMIT {limit}"),
     )
 
 
