@@ -105,7 +105,11 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     # turn table upside down
     tabell = tabell[::-1]
 
-    return tabell.reset_index().rename(columns={"index": "MÅNED"})
+    return (
+        tabell.sort_index(axis=1)
+        .reset_index()
+        .rename(columns={"index": "MÅNED"})
+    )
 
 
 def antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
@@ -134,7 +138,11 @@ def antall_applikasjon_tabell_siste_30_dager(leverte_iatjenester: pd.DataFrame) 
     # turn table upside down
     tabell = tabell[::-1]
 
-    return tabell.reset_index().rename(columns={"index": "DAG"})
+    return (
+        tabell.sort_index(axis=1)
+        .reset_index()
+        .rename(columns={"index": "DAG"}) 
+    )
 
 
 def count_per_form_av_tjeneste(leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False):
