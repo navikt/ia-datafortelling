@@ -12,13 +12,16 @@ class KibanaFormatter(logging.Formatter):
 
 
 def get_logger(level=logging.INFO) -> logging.Logger:
-    logger = logging.getLogger(name="ia-datafortelling")
-    logger.setLevel(level)
+    the_logger = logging.getLogger(name="ia-datafortelling")
+    the_logger.setLevel(level)
 
     handler = logging.StreamHandler()
     handler.setLevel(level=level)
     handler.setFormatter(KibanaFormatter())
 
-    logger.handlers = [handler]
+    the_logger.handlers = [handler]
 
-    return logger
+    return the_logger
+
+
+log = get_logger()

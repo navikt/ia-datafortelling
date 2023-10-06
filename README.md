@@ -5,7 +5,15 @@ den [her](https://data.intern.nav.no/story/3f485566-49fc-4867-937e-618293158ef8)
 
 ## Utvikling
 
-Dette prosjektet bruker Python 3.11. 
+Dette prosjektet bruker Python 3.11.
+
+Installer quarto ved å følge guiden på quarto sine nettsider.
+
+Som en god praksis, opprett et virtuelt pythonmiljø i root til prosjektet:
+python3.11 -m venv env
+source env/bin/activate
+
+Installer requirements med pip3 install -r requirements.txt.
 
 Secrets for dette prosjektet ligger
 i [Google Secret Manager](https://console.cloud.google.com/security/secret-manager?project=teamia-prod-df3d)

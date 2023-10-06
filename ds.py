@@ -133,7 +133,7 @@ def unike_bedrifter_per_år_tekst(data: pd.DataFrame) -> str:
 
     result = ""
     for år in unike_år:
-        result += f"- {år}: {data[år]}´n"
+        result += f"- {år}: {data[år]}<br>"
 
     return result
 

@@ -7,10 +7,10 @@ date: now
 date-format: "DD.MM.YYYY HH:mm:ss z"
 published-title: "Oppdatert"
 author: Team IA
-author-title: "Eier"
 execute:
     echo: false
     warning: false
+    daemon: false
 format:
     html:
         toc: true
@@ -19,30 +19,51 @@ format:
         embed-resources: true
 jupyter: python3
 ---
-<span style="color:red;">
+Statistikken på denne siden viser antall digitale IA-tjenester.
+
+En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i
+tjenesten. Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
+
+Dataregistreringen startet mars 2021.
+
 NB! Dette er ikke offisiell statistikk og må ikke deles utenfor NAV.
-</span>
+
+<div style="color: gray;">
 Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
+</div>
 
 ```{python}
+# Hindre caching-problematikk ved lokal kjøring
 %load_ext autoreload
 %autoreload 2
 
-from main import (
-    query_data,
+from logger import log
 
-)
+from data_fetching import query_data
+from data_prepping import prep_data
 
 from ds import (
     create_bar_plot,
     create_line_plot,
     create_bar_plot_with_button,
-    update_layout,
     create_cumulative_histogram,
     create_table,
     unike_bedrifter_per_år_tekst,
 )
 
-bq_client = bigquery_utils.create_client()
+raw_data = query_data(limit=1000)
+preppet = prep_data(raw_data)
+
+log.info("Updating datastory...")
+```
+
+# Unike bedrifter per år
+```{python}
+print(preppet["unike_bedrifter_per_år"])
+unike_bedrifter_per_år_tekst(preppet["unike_bedrifter_per_år"])
+```
+
+```{python}
+log.info("Updating datastory...Done")
 
 ```
