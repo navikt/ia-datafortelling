@@ -1,0 +1,48 @@
+---
+title: "Leverte IA-tjenester"
+subtitle: Statistikken på denne siden viser antall digitale IA-tjenester levert i selvbetjente løsninger.
+title-block-banner: true
+title-block-banner-color: white
+date: now
+date-format: "DD.MM.YYYY HH:mm:ss z"
+published-title: "Oppdatert"
+author: Team IA
+author-title: "Eier"
+execute:
+    echo: false
+    warning: false
+format:
+    html:
+        toc: true
+        toc-title: Indeks
+        page-layout: full
+        embed-resources: true
+jupyter: python3
+---
+<span style="color:red;">
+NB! Dette er ikke offisiell statistikk og må ikke deles utenfor NAV.
+</span>
+Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
+
+```{python}
+%load_ext autoreload
+%autoreload 2
+
+from main import (
+    query_data,
+
+)
+
+from ds import (
+    create_bar_plot,
+    create_line_plot,
+    create_bar_plot_with_button,
+    update_layout,
+    create_cumulative_histogram,
+    create_table,
+    unike_bedrifter_per_år_tekst,
+)
+
+bq_client = bigquery_utils.create_client()
+
+```

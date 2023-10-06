@@ -1,8 +1,12 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.subplots as sp
 import plotly.io as plio
-from datastory.datastory import DataStory
+
+
+def formater_tittel(overskrift, undertekst):
+    return f"<br><span style='font-size:1em;color:gray'>{overskrift}<br><span style='font-size:0.7em;color:gray'>{undertekst}"
 
 
 def create_bar_plot(data, **kwargs) -> str:
@@ -138,9 +142,9 @@ def unike_bedrifter_per_år_tekst(data: pd.DataFrame) -> str:
     return result
 
 
-def create_datastory(preppede_data: {}) -> DataStory:
-    ds = DataStory(name="Leverte IA-tjenester")
-    ds.header(content="Leverte digitale IA-tjenester")
+def create_datastory(preppede_data: {}):
+
+
     ds.markdown(
         md=f""" 
     Statistikken på denne siden viser antall digitale IA-tjenester. 

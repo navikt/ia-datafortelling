@@ -190,8 +190,6 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
 
 
 def fordeling_antall_ansatte(leverte_iatjenester: pd.DataFrame) -> dict:
-    siste_år = leverte_iatjenester["opprettet_date"]
-
     relevant_data = leverte_iatjenester[
         ["orgnr", "kilde_applikasjon", "antall_ansatte"]
     ]
