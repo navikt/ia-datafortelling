@@ -204,8 +204,6 @@ def create_datastory(preppede_data: {}) -> DataStory:
                 for tjeneste in fordeling_antall_ansatte.keys()
             ],
             labels=list(fordeling_antall_ansatte.keys()),
-            default_active=2,
-            xrangeslider=0,
             yaxis_title="Antall ansatte",
         )
     )
