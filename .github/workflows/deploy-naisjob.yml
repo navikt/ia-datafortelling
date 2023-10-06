@@ -1,0 +1,45 @@
+name: Build and deploy Naisjob
+run-name: Build and deploy naisjob || ${{ github.event.head_commit.message }}
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-build-push:
+    name: Build, test and push docker image
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - name: Push to Google Artifact Registry
+        uses: nais/docker-build-push@v0
+        id: docker-push
+        with:
+          team: teamia
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          salsa: false
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
+
+  deploy-naisjob-to-prod:
+    name: Deploy to prod-GCP
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          CLUSTER: prod-gcp
+          IMAGE: ${{ needs.docker-build-push.outputs.image }}
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          RESOURCE: .nais.yaml
