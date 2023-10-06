@@ -1,4 +1,3 @@
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as plio
@@ -142,19 +141,17 @@ def create_datastory(preppede_data: {}) -> DataStory:
     ds = DataStory(name="Leverte IA-tjenester")
     ds.header(content="Leverte digitale IA-tjenester")
     ds.markdown(
-        md=f""" 
+        f""" 
     Statistikken på denne siden viser antall digitale IA-tjenester. 
     Dataregistreringen startet mars 2021.
     
     En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i 
     tjenesten. Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
-
-    Unike bedrifter per år: 
-    {unike_bedrifter_per_år_tekst(preppede_data["unike_bedrifter_per_år"])}
-    
     """
     )
     ds.header(content="Unike virksomheter")
+    for år, verdi in preppede_data["unike_bedrifter_per_år"].items():
+        ds.markdown(f"- {år}: {verdi}")
     ds.plotly(
         create_bar_plot_with_button(
             [
