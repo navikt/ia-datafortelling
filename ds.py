@@ -195,6 +195,20 @@ def create_datastory(preppede_data: {}) -> DataStory:
             xaxis_title="Form av tjeneste",
         )
     )
+    ds.header(content="Fordeling antall ansatte")
+    fordeling_antall_ansatte = preppede_data["fordeling_antall_ansatte"]
+    ds.plotly(
+        create_bar_plot_with_button(
+            [
+                fordeling_antall_ansatte[tjeneste]
+                for tjeneste in fordeling_antall_ansatte.keys()
+            ],
+            labels=list(fordeling_antall_ansatte.keys()),
+            default_active=2,
+            xrangeslider=0,
+            yaxis_title="Antall ansatte",
+        )
+    )
     ds.header("Tilbakevendende brukere")
     ds.markdown(
         md="""

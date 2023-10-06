@@ -41,6 +41,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(
             leverte_iatjenester, "FOREBYGGINGSPLAN"
         ),
+        "fordeling_antall_ansatte": fordeling_antall_ansatte(leverte_iatjenester),
         "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(
             leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True
         ),
@@ -116,7 +117,7 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
 
     tjeneste_dataframes = dict()
     for tjeneste, antall_per_mnd in antall_per_mnd.groupby(["Tjeneste"]):
-        tjeneste_dataframes[tjeneste] = antall_per_mnd.set_index("Måned")
+        tjeneste_dataframes[tjeneste[0]] = antall_per_mnd.set_index("Måned")
 
     tabell = pd.DataFrame(index=måneder, columns=tjenester)
 
@@ -147,7 +148,7 @@ def antall_applikasjon_tabell_siste_30_dager(
 
     tjeneste_dataframes = dict()
     for tjeneste, antall_per_dag in antall_per_dag.groupby(["Tjeneste"]):
-        tjeneste_dataframes[tjeneste] = antall_per_dag.set_index("Dag")
+        tjeneste_dataframes[tjeneste[0]] = antall_per_dag.set_index("Dag")
 
     tabell = pd.DataFrame(index=dager, columns=tjenester)
 
@@ -186,6 +187,37 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
             for gjeldende_kvartal, neste_kvartal in kvartaler_til_sammenlikning
         ]
     ).set_index("Kvartal")
+
+
+def fordeling_antall_ansatte(leverte_iatjenester: pd.DataFrame) -> dict:
+    siste_år = leverte_iatjenester["opprettet_date"]
+
+    relevant_data = leverte_iatjenester[
+        ["orgnr", "kilde_applikasjon", "antall_ansatte"]
+    ]
+
+    bins = [0, 5, 10, 20, 50, 100, 100000]
+    labels = ["0-4", "5-9", "10-19", "20-49", "50-99", "100+"]
+
+    resultat = dict()
+    for tjeneste in relevant_data["kilde_applikasjon"].unique():
+        data_for_enkelttjeneste = relevant_data[
+            relevant_data["kilde_applikasjon"] == tjeneste
+        ]
+
+        resultat[tjeneste] = (
+            pd.cut(
+                x=data_for_enkelttjeneste["antall_ansatte"],
+                bins=bins,
+                labels=labels,
+                include_lowest=True,
+                right=True,
+            )
+            .value_counts()
+            .reindex(labels)
+        )
+
+    return resultat
 
 
 def andel_tilbakevendende(
