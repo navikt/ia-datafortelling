@@ -17,6 +17,9 @@ format:
         toc-title: Indeks
         page-layout: full
         embed-resources: true
+        theme: minty
+        grid:
+          body-width: 1000px
 jupyter: python3
 ---
 Statistikken på denne siden viser antall digitale IA-tjenester.
@@ -37,8 +40,6 @@ Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
 %load_ext autoreload
 %autoreload 2
 
-from logger import log
-
 from data_fetching import query_data
 from data_prepping import prep_data
 
@@ -48,22 +49,71 @@ from ds import (
     create_bar_plot_with_button,
     create_cumulative_histogram,
     create_table,
-    unike_bedrifter_per_år_tekst,
+    markdown_table_row,
 )
 
 raw_data = query_data(limit=1000)
-preppet = prep_data(raw_data)
-
-log.info("Updating datastory...")
+data = prep_data(raw_data)
 ```
 
-# Unike bedrifter per år
+# Unike virksomheter
 ```{python}
-print(preppet["unike_bedrifter_per_år"])
-unike_bedrifter_per_år_tekst(preppet["unike_bedrifter_per_år"])
+from ds import aaa
+unike_virksomheter_bulletlist(data)
+
+
+```{python}
+from ds import plot_asd
+plot_asd(data)
 ```
 
+## Kululativt historgram av unike virksomheter
 ```{python}
-log.info("Updating datastory...Done")
+from ds import plot_antall_unike_virksomheter_kumulativt
+plot_antall_unike_virksomheter_kumulativt(data)
+```
 
+
+# Leverte digitale IA-tjenester per tjeneste/applikasjon
+```{python}
+from ds import (
+    plot_tjenester_per_applikasjon,
+    antall_per_app_tabell_mnd,
+    antall_per_app_tabell_dager,
+)
+
+plot_tjenester_per_applikasjon(data)
+```
+
+### Månedsvis, siste to år
+```{python}
+antall_per_app_tabell_mnd(data)
+```
+
+### Siste 30 dager
+```{python}
+antall_per_app_tabell_dager(data)
+```
+
+# Informasjons- vs. interaksjonstjeneste i forebyggingsplan
+```{python}
+from ds import informasjon_vs_interaksjon
+informasjon_vs_interaksjon(data)
+```
+
+# Fordeling antall ansatte
+```{python}
+from ds import fordeling_antall_ansatte
+fordeling_antall_ansatte(data)
+```
+
+# Tilbakevendende brukere
+Grafene viser antall og prosentandel av virksomheter som har fått levert digital
+IA-tjeneste i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste
+kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som jobber
+systematisk med IA.
+
+```{python}
+from ds import plot_tilbakevendende_brukere
+plot_tilbakevendende_brukere(data)
 ```
