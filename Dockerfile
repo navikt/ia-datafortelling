@@ -51,7 +51,6 @@ RUN python3 -m venv /opt/venv
 
 # Copy necessary files to the docker image.
 COPY run.sh .
-COPY config.py .
 COPY *.qmd .
 # ---
 COPY index.qmd .
@@ -59,7 +58,6 @@ COPY publish.sh .
 COPY requirements.txt .
 COPY logger.py .
 COPY data_prepping.py .
-COPY config.py .
 COPY bigquery_utils.py .
 
 # Change the ownership of the "/quarto" directory to the "python" user and group.

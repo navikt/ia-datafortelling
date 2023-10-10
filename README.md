@@ -10,17 +10,22 @@ Dette prosjektet bruker Python 3.11.
 Installer quarto ved å følge guiden på quarto sine nettsider.
 
 Som en god praksis, opprett et virtuelt pythonmiljø i root til prosjektet:
-python3.11 -m venv env
-source env/bin/activate
 
-Installer requirements med pip3 install -r requirements.txt.
+```
+python3.11 -m venv env && source env/bin/activate
+```
+
+Installer avhengigheter med
+
+```
+pip3 install -r requirements.txt
+```
 
 Secrets for dette prosjektet ligger
 i [Google Secret Manager](https://console.cloud.google.com/security/secret-manager?project=teamia-prod-df3d)
 
-I listen over avhengigheter (`requirements.txt`) finner du en referanse til _black_, som er et
-formateringsbibliotek (ala _prettier_ for Javascript). Det er anbefalt
-å [integrere dette verktøyet i IDE-en](https://black.readthedocs.io/en/stable/integrations/editors.html)
+Det er anbefalt at du itegrerer formateringsverktøyet
+_black_ [i IDE-en du bruker](https://black.readthedocs.io/en/stable/integrations/editors.html).
 
 ### Lokal kjøring og debugging
 
@@ -35,10 +40,12 @@ refererer her til et token som peker på den datafortellingen som du ønsker å 
 Se [NADA-docs](https://docs.knada.io/dele-innsikt/datafortelling/#oppdatere-eksisterende-datafortelling) for mer info.
 
 ### Kontakt
+
 for henvendelser, opprett [issue her på GitHub](https://github.com/navikt/ia-datafortelling/issues).  
 Ansatte i NAV-IT kan også kontake oss i Slack-kanalen #teamia
 
 ### Troubleshooting
+
 > [NOTE]
 > Feil: `google.auth.exceptions.DefaultCredentialsError`  
 > Løsning: Kjør `gcloud auth application-default login`

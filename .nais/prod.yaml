@@ -10,18 +10,22 @@ spec:
   ttlSecondsAfterFinished: 340
   schedule: "0 7-17/1 * * *"
   backoffLimit: 2
-  spec:
-  accessPolicy:
-    outbound:
-      external:
-        - host: data.ekstern.dev.nav.no # for dev
-        - host: data.nav.no # for prod
   gcp:
     bigQueryDatasets:
       - name: ia_tjenester_metrikker
         permission: READ
   envFrom:
     - secret: ia-tjenester-metrikker-datastory-secrets # value is the secret name in Google Secret Manager
+  env:
+    - name: NADA_ENV
+      value: data.nav.no
+    - name: QUARTO_ID
+      value:
+  accessPolicy:
+    outbound:
+      external:
+        - host: data.nav.no
+
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
