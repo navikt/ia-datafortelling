@@ -33,10 +33,8 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 RUN groupadd -g 1069 python && \
     useradd -r -u 1069 -g python python
 
-# Set the working directory for the Docker image to "/quarto".
-WORKDIR /quarto
-
 # Copies the Quarto tool and virtual environment created in the first step to the Docker image.
+WORKDIR /quarto
 COPY --chown=python:python --from=compile-image /opt/venv /opt/venv
 COPY --chown=python:python --from=compile-image quarto-dist/ quarto-dist/
 
@@ -46,7 +44,7 @@ RUN ln -s /quarto/quarto-dist/bin/quarto /usr/local/bin/quarto
 # Set the PATH environment variable to include the virtual environment.
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Create a virtual environment for Python packages (is this needed)?
+# Create a virtual environment for Python packages
 RUN python3 -m venv /opt/venv
 
 # Copy necessary files to the docker image.
