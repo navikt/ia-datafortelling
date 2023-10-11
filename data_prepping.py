@@ -1,10 +1,10 @@
 import pandas as pd
 from datetime import datetime, timedelta
-from logger import log
+
+from pandas import DataFrame
 
 
 def prep_data(data: pd.DataFrame) -> {}:
-    log.info("Prepping data...")
     leverte_iatjenester = (
         data.assign(
             opprettet_year=data["opprettet"].dt.year,
@@ -26,7 +26,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         .reset_index()
     )
 
-    result = {
+    return {
         "unike_bedrifter_per_år": unike_bedrifter_per_år(leverte_iatjenester),
         "unike_bedrifter_per_kvartal": unike_bedrifter_per_kvartal(leverte_iatjenester),
         "unike_bedrifter_per_måned": unike_bedrifter_per_mnd(leverte_iatjenester),
@@ -49,8 +49,6 @@ def prep_data(data: pd.DataFrame) -> {}:
         ),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
     }
-    log.info("Prepping data...Done")
-    return result
 
 
 def unike_bedrifter_per_år(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
@@ -75,7 +73,7 @@ def unike_bedrifter_per_dag(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 def unike_bedrifter_første_dag_per_år(
     leverte_iatjenester: pd.DataFrame,
-) -> pd.DataFrame:
+) -> tuple[DataFrame, pd.DatetimeIndex]:
     første_dag_per_år = (
         leverte_iatjenester.sort_values(by=["opprettet_date"], ascending=True)
         .drop_duplicates(subset=["orgnr", "opprettet_year"])
