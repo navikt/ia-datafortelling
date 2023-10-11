@@ -8,19 +8,19 @@ metadata:
 spec:
   image: {{ image }}
   ttlSecondsAfterFinished: 340
-  schedule: "0 7-17/1 * * *"
+  schedule: "45 7-17/1 * * *"
   backoffLimit: 2
   gcp:
     bigQueryDatasets:
       - name: ia_tjenester_metrikker
         permission: READ
   envFrom:
-    - secret: ia-tjenester-metrikker-datastory-secrets # value is the secret name in Google Secret Manager
+    - secret: teamia-nada-secret # from Google Secret Manager
   env:
     - name: NADA_ENV
       value: data.nav.no
-    - name: QUARTO_ID
-      value:
+    - name: LEVERTE_IA_TJENESTER_QUARTO_ID
+      value: 15c12bb7-30b0-4dc2-9ef0-afc72c2a03d8
   accessPolicy:
     outbound:
       external:

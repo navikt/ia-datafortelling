@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - quarto
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
