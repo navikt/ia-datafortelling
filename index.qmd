@@ -1,6 +1,6 @@
 ---
-title: "Leverte IA-tjenester"
-subtitle: Statistikken på denne siden viser antall digitale IA-tjenester levert i selvbetjente løsninger.
+title: Leverte IA-tjenester
+subtitle: Oversikt over digitale IA-tjenester i selvbetjente løsninger.
 title-block-banner: true
 title-block-banner-color: white
 date: now
@@ -22,7 +22,7 @@ format:
           body-width: 1000px
 jupyter: python3
 ---
-Statistikken på denne siden viser antall digitale IA-tjenester.
+Statistikken på denne siden viser antall leverte digitale IA-tjenester.
 
 En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i
 tjenesten. Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
