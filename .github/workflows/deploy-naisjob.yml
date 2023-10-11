@@ -34,11 +34,12 @@ jobs:
       image: ${{ steps.docker-push.outputs.image }}
 
   deploy-naisjob-to-prod:
-    name: Deploy to prod-GCP
+    name: Deploy to prod-gcp
     needs: docker-build-push
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: nais/deploy/actions/deploy@v1
         env:
           CLUSTER: prod-gcp

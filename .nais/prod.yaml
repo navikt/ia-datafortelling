@@ -1,12 +1,12 @@
 apiVersion: nais.io/v1
 kind: Naisjob
 metadata:
+  name: ia-datafortelling
   labels:
     team: teamia
-  name: ia-datafortelling
   namespace: teamia
   annotations:
-    nais.io/read-only-file-system: "false"
+    nais.io/read-only-file-system: false
 spec:
   image: {{ image }}
   ttlSecondsAfterFinished: 340
