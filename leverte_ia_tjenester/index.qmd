@@ -41,58 +41,65 @@ Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
 %load_ext autoreload
 %autoreload 2
 
-from data_fetching import query_data
-from data_prepping import prep_data
+import sys
+sys.path.append('..')
 
-raw_data = query_data()
+from data_prepping import prep_data
+from common.data_fetching import query_data
+
+PROJECT = "teamia-prod-df3d"
+DATASET = "ia_tjenester_metrikker"
+TABLE = "IA-tjenester-metrikker"
+
+raw_data = query_data(PROJECT, DATASET, TABLE)
 data = prep_data(raw_data)
 ```
 
 # Unike virksomheter
 ```{python}
-from leverte_ia_tjenester_plots import unike_virksomheter_bulletlist
+from plots import unike_virksomheter_bulletlist
 unike_virksomheter_bulletlist(data)
 ```
 
 ```{python}
-from leverte_ia_tjenester_plots import plot_unike_bedrifter
+from plots import plot_unike_bedrifter
 plot_unike_bedrifter(data)
 ```
 
 ## Kululativt historgram av unike virksomheter
 ```{python}
-from leverte_ia_tjenester_plots import plot_antall_unike_virksomheter_kumulativt
+from plots import plot_antall_unike_virksomheter_kumulativt
 plot_antall_unike_virksomheter_kumulativt(data)
 ```
 
 
 # Leverte digitale IA-tjenester per tjeneste/applikasjon
 ```{python}
-from leverte_ia_tjenester_plots import plot_tjenester_per_applikasjon
+from plots import plot_tjenester_per_applikasjon
 plot_tjenester_per_applikasjon(data)
 ```
 
 ### Siste 24 måneder
 ```{python}
-from leverte_ia_tjenester_plots import tabell_antall_per_app_siste_24_mnd
+from plots import tabell_antall_per_app_siste_24_mnd
 tabell_antall_per_app_siste_24_mnd(data)
 ```
 
 ### Siste 30 dager
 ```{python}
-from leverte_ia_tjenester_plots import  tabell_antall_per_app_siste_30_dager
+from plots import  tabell_antall_per_app_siste_30_dager
 tabell_antall_per_app_siste_30_dager(data)
 ```
 
 # Informasjons- vs. interaksjonstjeneste i forebyggingsplan
 ```{python}
-from leverte_ia_tjenester_plots import plot_informasjon_vs_interaksjon
+from plots import plot_informasjon_vs_interaksjon
 plot_informasjon_vs_interaksjon(data)
 ```
 
 # Fordeling antall ansatte
 ```{python}
-from leverte_ia_tjenester_plots import plot_fordeling_antall_ansatte
+from plots import plot_fordeling_antall_ansatte
 plot_fordeling_antall_ansatte(data)
 ```
 
@@ -103,6 +110,6 @@ kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som job
 systematisk med IA.
 
 ```{python}
-from leverte_ia_tjenester_plots import plot_tilbakevendende_brukere
+from plots import plot_tilbakevendende_brukere
 plot_tilbakevendende_brukere(data)
 ```

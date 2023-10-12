@@ -2,7 +2,12 @@ import pandas as pd
 from IPython.core.display import Markdown
 from plotly.graph_objs import Figure
 
-from visualization_utils import create_line_plot, create_bar_plot_with_button, create_cumulative_histogram, create_table
+from common.visualization_utils import (
+    create_line_plot,
+    create_bar_plot_with_button,
+    create_cumulative_histogram,
+    create_table,
+)
 
 
 def plot_unike_bedrifter(data: pd.DataFrame):
