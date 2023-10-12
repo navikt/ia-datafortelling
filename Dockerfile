@@ -14,11 +14,10 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install the Quarto tool.
-RUN QUARTO_VERSION=$(curl https://api.github.com/repos/quarto-dev/quarto-cli/releases/latest | jq '.tag_name' | sed -e 's/[\"v]//g') && \
-    wget https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
-    tar -xvzf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
-    ln -s quarto-${QUARTO_VERSION} quarto-dist && \
-    rm -rf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz
+RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.450/quarto-1.3.450-linux-amd64.tar.gz
+RUN tar -xvzf quarto-1.3.450-linux-amd64.tar.gz
+RUN ln -s quarto-1.3.450 quarto-dist
+RUN rm -rf quarto-1.3.450-linux-amd64.tar.gz
 
 # Use a lightweight version of Python 3.11 in the final Docker image.
 FROM python:3.11-slim AS runner-image
@@ -49,8 +48,9 @@ RUN python3 -m venv /opt/venv
 
 # Copy necessary files to the docker image.
 COPY run.sh .
-COPY ./**/*.qmd ./
-COPY ./**/*.py ./
+COPY leverte_ia_tjenester/ /quarto/leverte_ia_tjenester/
+COPY common/ /quarto/common/
+COPY ia_key_metrics/ /quarto/ia_key_metrics/
 
 # Change the ownership of the "/quarto" directory to the "python" user and group.
 RUN chown python:python /quarto -R
