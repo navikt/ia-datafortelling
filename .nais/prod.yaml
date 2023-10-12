@@ -1,14 +1,19 @@
 apiVersion: nais.io/v1
 kind: Naisjob
 metadata:
+  annotations:
+    nais.io/read-only-file-system: "false"
   name: ia-datafortelling
   labels:
     team: teamia
   namespace: teamia
-  annotations:
-    nais.io/read-only-file-system: "false"
 spec:
   image: {{ image }}
+  resources:
+    limits:
+      memory: 8Gi
+    requests:
+      memory: 1Gi
   ttlSecondsAfterFinished: 340
   schedule: "*/10 7-17 * * *"
   backoffLimit: 2
