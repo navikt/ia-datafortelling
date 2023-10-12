@@ -3,7 +3,7 @@ kind: Naisjob
 metadata:
   annotations:
     nais.io/read-only-file-system: "false"
-  name: ia-datafortelling
+  name: team-ia-datafortellinger
   labels:
     team: teamia
   namespace: teamia
@@ -15,7 +15,7 @@ spec:
     requests:
       memory: 1Gi
   ttlSecondsAfterFinished: 340
-  schedule: "*/10 7-17 * * *"
+  schedule: "0 7-17/1 * * 1-5"
   backoffLimit: 2
   gcp:
     bigQueryDatasets:
