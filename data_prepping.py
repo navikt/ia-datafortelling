@@ -1,6 +1,8 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
+from pandas import DataFrame
+
 
 def prep_data(data: pd.DataFrame) -> {}:
     leverte_iatjenester = (
@@ -71,7 +73,7 @@ def unike_bedrifter_per_dag(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
 
 def unike_bedrifter_første_dag_per_år(
     leverte_iatjenester: pd.DataFrame,
-) -> pd.DataFrame:
+) -> tuple[DataFrame, pd.DatetimeIndex]:
     første_dag_per_år = (
         leverte_iatjenester.sort_values(by=["opprettet_date"], ascending=True)
         .drop_duplicates(subset=["orgnr", "opprettet_year"])
@@ -128,7 +130,7 @@ def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame
     # turn table upside down
     tabell = tabell[::-1]
 
-    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "MÅNED"})
+    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "Måned"})
 
 
 def antall_applikasjon_tabell_siste_30_dager(
@@ -159,7 +161,7 @@ def antall_applikasjon_tabell_siste_30_dager(
     # turn table upside down
     tabell = tabell[::-1]
 
-    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "DAG"})
+    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "Dag"})
 
 
 def count_per_form_av_tjeneste(
@@ -190,8 +192,6 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
 
 
 def fordeling_antall_ansatte(leverte_iatjenester: pd.DataFrame) -> dict:
-    siste_år = leverte_iatjenester["opprettet_date"]
-
     relevant_data = leverte_iatjenester[
         ["orgnr", "kilde_applikasjon", "antall_ansatte"]
     ]

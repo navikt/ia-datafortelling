@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - quarto
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,6 +17,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -32,14 +34,15 @@ jobs:
       image: ${{ steps.docker-push.outputs.image }}
 
   deploy-naisjob-to-prod:
-    name: Deploy to prod-GCP
+    name: Deploy to prod-gcp
     needs: docker-build-push
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: nais/deploy/actions/deploy@v1
         env:
           CLUSTER: prod-gcp
           IMAGE: ${{ needs.docker-build-push.outputs.image }}
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          RESOURCE: .nais.yaml
+          RESOURCE: .nais/prod.yaml
