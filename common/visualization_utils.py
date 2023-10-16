@@ -103,3 +103,42 @@ def create_cumulative_histogram(data_frame, x_col, label_col, xaxis, **kwargs):
 def create_table(data) -> Markdown:
     # table = pd.pivot_table(data)
     return Markdown(tabulate(data.to_numpy(), headers=data.columns))
+
+
+def make_goal_indicator(verdi, mål, tittel):
+    fig = go.Figure()
+    fig.add_trace(make_gauge_indicator(verdi, mål))
+
+    fig.update_layout(
+        height=300,
+        width=850,
+        title={
+            "text": tittel,
+            "x": 0.5,
+            "y": 1,
+        },
+    )
+    return fig
+
+
+def make_gauge_indicator(verdi, mål):
+    return go.Indicator(
+        mode="number+gauge+delta",
+        gauge={
+            "shape": "bullet",
+            "axis": {"range": [None, mål * 1.2]},
+            "threshold": {
+                "line": {"color": "red", "width": 2},
+                "thickness": 0.75,
+                "value": mål,
+            },
+            "bar": {"thickness": 0.5},
+        },
+        delta={"reference": mål},
+        value=verdi,
+        number={"valueformat": ", g", "font_size": 85},
+    )
+
+
+def formater_tittel(overskrift, undertekst):
+    return f"<br><span style='font-size:1em;color:gray'>{overskrift}<br><span style='font-size:0.7em;color:gray'>{undertekst}"

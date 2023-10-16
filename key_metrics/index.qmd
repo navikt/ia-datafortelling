@@ -27,8 +27,14 @@ Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
 import sys
 sys.path.append('..')
 
-from main import load_data, plot_key_metrics
+PROJECT = "teamia-prod-df3d"
+DATASET = "ia_tjenester_metrikker"
+TABLE = "IA-tjenester-metrikker"
+SQL_QUERY = f"SELECT  * FROM `{PROJECT}.{DATASET}.{TABLE}`"
 
-data = load_data()
+from common.data_fetching import query_data
+from plots import plot_key_metrics
+
+data = query_data(PROJECT, DATASET, TABLE)
 plot_key_metrics(data)
 ```
