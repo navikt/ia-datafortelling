@@ -17,7 +17,7 @@ format:
 jupyter: python3
 ---
 
-Kildekoden finnes på [GitHub](https://github.com/navikt/ia-key-metrics).
+Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
 
 ```{python}
 # Hindre caching-problematikk ved lokal kjøring
