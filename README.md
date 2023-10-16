@@ -60,4 +60,4 @@ Ansatte i NAV-IT kan også kontake oss i Slack-kanalen #teamia
 
 > [!WARNING]
 > Feil: `You are authorizing client libraries without access to a web browser.`  
-> Løsning: `Legg til flagg --no-launch-browser` til `gcloud auth login` 
+> Løsning: Legg flagg `--no-launch-browser` etter `gcloud auth login` 
