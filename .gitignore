@@ -133,8 +133,14 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# Quarto
+/.quarto/
+**/*.html
+
 # Pyre type checker
 .pyre/
 
 .DS_Store
-/.quarto/
+
+
+
