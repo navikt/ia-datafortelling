@@ -72,6 +72,8 @@ plot_antall_unike_virksomheter_kumulativt(data)
 ```
 
 # Fordeling antall ansatte
+Grafen kategoriserer virksomheter ut i fra hvor mange ansatte de har. En virksomhet man maksimalt få ett treff per dag.
+
 ```{python}
 from plots import plot_fordeling_antall_ansatte
 plot_fordeling_antall_ansatte(data)
@@ -82,7 +84,6 @@ Grafene viser antall og prosentandel av virksomheter som har fått levert digita
 IA-tjeneste i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste
 kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som jobber
 systematisk med IA.
-
 
 ```{python}
 from plots import plot_tilbakevendende_brukere
