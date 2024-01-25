@@ -1,13 +1,8 @@
 from IPython.core.display import Markdown
-from plotly import express as px, graph_objects as go
+from plotly import graph_objects as go
 from plotly.graph_objs import Figure
+import pandas as pd
 from tabulate import tabulate
-
-
-def create_line_plot(data, **kwargs):
-    fig = px.line(data, width=1100, **kwargs)
-    fig.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01))
-    return fig
 
 
 def create_bar_plot_with_button(
@@ -69,6 +64,22 @@ def create_bar_plot_with_button(
             height=700,
             xaxis=dict(autorange=True, rangeslider=dict(autorange=True, visible=True)),
         )
+
+    return fig
+
+
+def create_bar_plot(
+        series: pd.Series, label: str,
+) -> Figure:
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Bar(
+            visible=True,
+            x=series.index,
+            y=series.values,
+        )
+    )
 
     return fig
 

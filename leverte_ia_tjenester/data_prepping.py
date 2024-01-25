@@ -1,6 +1,6 @@
-import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 
+import pandas as pd
 from pandas import DataFrame
 
 
@@ -17,12 +17,8 @@ def prep_data(data: pd.DataFrame) -> {}:
             opprettet_yearweek=data["opprettet"].apply(date_to_yearweek),
             opprettet_date=data["opprettet"].dt.date,
         )
-        # Vi sorterer etter dato og form av tjeneste så vi beholder interaksjons over
-        # informasjonstjeneste med bruk av "drop_duplicates".
-        # Hver gang vi leverer en interaksjonstjeneste i forebygginsplan, leverer vi
-        # også en informasjonstjeneste (vi må åpne et kort for å utføre oppgaver).
-        .sort_values(by=["opprettet_date", "form_av_tjeneste"], ascending=[True, False])
-        .drop_duplicates(subset=["orgnr", "kilde_applikasjon", "opprettet_date"])
+        .sort_values(by=["opprettet_date"], ascending=[True])
+        .drop_duplicates(subset=["orgnr", "opprettet_date"])
         .reset_index()
     )
 
@@ -35,18 +31,7 @@ def prep_data(data: pd.DataFrame) -> {}:
         "unike_bedrifter_første_dag_per_år": unike_bedrifter_første_dag_per_år(
             leverte_iatjenester
         ),
-        "per_applikasjon": per_applikasjon(leverte_iatjenester),
-        "antall_applikasjon_tabell": antall_applikasjon_tabell(leverte_iatjenester),
-        "antall_applikasjon_tabell_siste_30_dager": antall_applikasjon_tabell_siste_30_dager(
-            leverte_iatjenester
-        ),
-        "antall_form_av_tjeneste_plan": count_per_form_av_tjeneste(
-            leverte_iatjenester, "FOREBYGGINGSPLAN"
-        ),
         "fordeling_antall_ansatte": fordeling_antall_ansatte(leverte_iatjenester),
-        "andel_form_av_tjeneste_plan": count_per_form_av_tjeneste(
-            leverte_iatjenester, "FOREBYGGINGSPLAN", andel=True
-        ),
         "tilbakevendende_brukere": tilbakevendende_brukere(leverte_iatjenester),
     }
 
@@ -97,82 +82,6 @@ def unike_bedrifter_første_dag_per_år(
     return første_dag_per_år, all_days
 
 
-def per_applikasjon(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd = antall_per_mnd[
-        ["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]
-    ]
-    antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
-
-    return antall_per_mnd.astype({"Måned": str, "Tjeneste": str, "Antall": int})
-
-
-def antall_applikasjon_tabell(leverte_iatjenester: pd.DataFrame) -> pd.DataFrame:
-    antall_per_mnd = per_app_per_mnd(leverte_iatjenester)
-    antall_per_mnd = antall_per_mnd[
-        ["kilde_applikasjon", "opprettet_yearmonth", "orgnr"]
-    ]
-    antall_per_mnd.columns = ["Tjeneste", "Måned", "Antall"]
-
-    tjenester = antall_per_mnd["Tjeneste"].unique()
-    måneder = antall_per_mnd["Måned"].unique()
-
-    tjeneste_dataframes = dict()
-    for tjeneste, antall_per_mnd in antall_per_mnd.groupby(["Tjeneste"]):
-        tjeneste_dataframes[tjeneste[0]] = antall_per_mnd.set_index("Måned")
-
-    tabell = pd.DataFrame(index=måneder, columns=tjenester)
-
-    for tjeneste in tjenester:
-        tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
-        tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
-
-    # turn table upside down
-    tabell = tabell[::-1]
-
-    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "Måned"})
-
-
-def antall_applikasjon_tabell_siste_30_dager(
-    leverte_iatjenester: pd.DataFrame,
-) -> pd.DataFrame:
-    now = datetime.now()
-    antall_per_dag = (
-        leverte_iatjenester[leverte_iatjenester.opprettet > now - timedelta(days=30)]
-        .groupby(["opprettet_date", "kilde_applikasjon"], as_index=False)
-        .count()
-    )
-    antall_per_dag = antall_per_dag[["kilde_applikasjon", "opprettet_date", "orgnr"]]
-    antall_per_dag.columns = ["Tjeneste", "Dag", "Antall"]
-
-    tjenester = antall_per_dag["Tjeneste"].unique()
-    dager = antall_per_dag["Dag"].unique()
-
-    tjeneste_dataframes = dict()
-    for tjeneste, antall_per_dag in antall_per_dag.groupby(["Tjeneste"]):
-        tjeneste_dataframes[tjeneste[0]] = antall_per_dag.set_index("Dag")
-
-    tabell = pd.DataFrame(index=dager, columns=tjenester)
-
-    for tjeneste in tjenester:
-        tabell[tjeneste] = tjeneste_dataframes[tjeneste]["Antall"]
-        tabell[tjeneste] = tabell[tjeneste].fillna(0).astype("int")
-
-    # turn table upside down
-    tabell = tabell[::-1]
-
-    return tabell.sort_index(axis=1).reset_index().rename(columns={"index": "Dag"})
-
-
-def count_per_form_av_tjeneste(
-    leverte_iatjenester: pd.DataFrame, tjeneste: str, andel=False
-):
-    filter_tjeneste = leverte_iatjenester.kilde_applikasjon == tjeneste
-    return leverte_iatjenester[filter_tjeneste].form_av_tjeneste.value_counts(
-        normalize=andel
-    )
-
-
 def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
     unike_per_kvartal = leverte_iatjenester.drop_duplicates(
         subset=["orgnr", "opprettet_yearquarter"]
@@ -193,31 +102,21 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
 
 def fordeling_antall_ansatte(leverte_iatjenester: pd.DataFrame) -> dict:
     relevant_data = leverte_iatjenester[
-        ["orgnr", "kilde_applikasjon", "antall_ansatte"]
+        ["orgnr", "antall_ansatte"]
     ]
 
     bins = [0, 5, 10, 20, 50, 100, 100000]
     labels = ["0-4", "5-9", "10-19", "20-49", "50-99", "100+"]
 
-    resultat = dict()
-    for tjeneste in relevant_data["kilde_applikasjon"].unique():
-        data_for_enkelttjeneste = relevant_data[
-            relevant_data["kilde_applikasjon"] == tjeneste
-        ]
-
-        resultat[tjeneste] = (
-            pd.cut(
-                x=data_for_enkelttjeneste["antall_ansatte"],
-                bins=bins,
-                labels=labels,
-                include_lowest=True,
-                right=True,
-            )
-            .value_counts()
-            .reindex(labels)
+    return (pd.cut(
+            x=relevant_data["antall_ansatte"],
+            bins=bins,
+            labels=labels,
+            include_lowest=True,
+            right=True,
         )
-
-    return resultat
+            .value_counts()
+            .reindex(labels))
 
 
 def andel_tilbakevendende(
@@ -243,12 +142,6 @@ def andel_tilbakevendende(
 
 def filtrer_på_kvartal(df: pd.DataFrame, kvartal: pd.Period) -> pd.Series:
     return df[df["opprettet_yearquarter"] == kvartal]["orgnr"]
-
-
-def per_app_per_mnd(df: pd.DataFrame):
-    return df.groupby(
-        ["opprettet_yearmonth", "kilde_applikasjon"], as_index=False
-    ).count()
 
 
 def formater_dagmåned(date: pd.Series):

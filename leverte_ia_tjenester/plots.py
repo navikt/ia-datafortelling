@@ -1,12 +1,10 @@
 import pandas as pd
-from IPython.core.display import Markdown
 from plotly.graph_objs import Figure
 
 from common.visualization_utils import (
-    create_line_plot,
     create_bar_plot_with_button,
     create_cumulative_histogram,
-    create_table,
+    create_table, create_bar_plot,
 )
 
 
@@ -26,41 +24,11 @@ def plot_unike_bedrifter(data: pd.DataFrame):
     )
 
 
-def plot_tjenester_per_applikasjon(data: pd.DataFrame) -> Figure:
-    return create_line_plot(
-        data["per_applikasjon"], x="Måned", y="Antall", color="Tjeneste"
-    )
-
-
-def tabell_antall_per_app_siste_24_mnd(data: pd.DataFrame) -> Markdown:
-    return create_table(
-        data["antall_applikasjon_tabell"]
-        .sort_values(by="Måned", ascending=False)
-        .head(24)
-    )
-
-
-def tabell_antall_per_app_siste_30_dager(data: pd.DataFrame) -> Markdown:
-    return create_table(data["antall_applikasjon_tabell_siste_30_dager"])
-
-
-def plot_informasjon_vs_interaksjon(data: pd.DataFrame) -> Figure:
-    return create_bar_plot_with_button(
-        list_of_series=[
-            100 * data["andel_form_av_tjeneste_plan"],
-            data["antall_form_av_tjeneste_plan"],
-        ],
-        labels=["Prosentandel", "Antall"],
-        xaxis_title="Form av tjeneste",
-    )
-
-
 def plot_fordeling_antall_ansatte(data: pd.DataFrame) -> Figure:
     antall_ansatte = data["fordeling_antall_ansatte"]
-    return create_bar_plot_with_button(
-        [antall_ansatte[tjeneste] for tjeneste in antall_ansatte.keys()],
-        labels=list(antall_ansatte.keys()),
-        yaxis_title="Antall ansatte",
+    return create_bar_plot(
+        antall_ansatte,
+        label="summy"
     )
 
 

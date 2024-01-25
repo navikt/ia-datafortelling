@@ -1,13 +1,13 @@
 ---
-title: Leverte IA-tjenester
-subtitle: Oversikt over digitale IA-tjenester i selvbetjente løsninger.
+title: Oversikt over selvbetjente digitale IA-løsninger
+subtitle: Oversikt over bruken av selvbetjente digitale IA-løsninger.
 title-block-banner: true
 title-block-banner-color: white
 date: now
 date-format: "DD.MM.YYYY HH:mm:ss z"
 published-title: "Oppdatert"
 author-title: "Eier"
-author: Team IA
+author: PIA
 execute:
     echo: false
     warning: false
@@ -23,10 +23,9 @@ format:
           body-width: 1000px
 jupyter: python3
 ---
-Statistikken på denne siden viser antall leverte digitale IA-tjenester.
+Statistikken på denne siden viser oversikt over bruken av selvbetjente, digitale IA-løsninger.
 
-En digital IA-tjeneste telles når en bruker har benyttet seg av innholdet i
-tjenesten. Det er ikke tilstrekkelig at brukeren kun har besøkt forsiden.
+En digital IA-tjeneste telles når en innlogget bruker har vært inne på en av de selvbetjente IA-sidene i mer enn fem sekunder.
 
 Dataregistreringen startet mars 2021.
 
@@ -72,31 +71,6 @@ from plots import plot_antall_unike_virksomheter_kumulativt
 plot_antall_unike_virksomheter_kumulativt(data)
 ```
 
-
-# Leverte digitale IA-tjenester per tjeneste/applikasjon
-```{python}
-from plots import plot_tjenester_per_applikasjon
-plot_tjenester_per_applikasjon(data)
-```
-
-### Siste 24 måneder
-```{python}
-from plots import tabell_antall_per_app_siste_24_mnd
-tabell_antall_per_app_siste_24_mnd(data)
-```
-
-### Siste 30 dager
-```{python}
-from plots import  tabell_antall_per_app_siste_30_dager
-tabell_antall_per_app_siste_30_dager(data)
-```
-
-# Informasjons- vs. interaksjonstjeneste i forebyggingsplan
-```{python}
-from plots import plot_informasjon_vs_interaksjon
-plot_informasjon_vs_interaksjon(data)
-```
-
 # Fordeling antall ansatte
 ```{python}
 from plots import plot_fordeling_antall_ansatte
@@ -108,6 +82,7 @@ Grafene viser antall og prosentandel av virksomheter som har fått levert digita
 IA-tjeneste i gjeldende kvartal, og som samtidig fikk levert digital IA-tjeneste
 kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som jobber
 systematisk med IA.
+
 
 ```{python}
 from plots import plot_tilbakevendende_brukere

@@ -47,6 +47,11 @@ leserettigheter
 til [BigQuery-datasettet](https://console.cloud.google.com/bigquery?project=teamia-prod-df3d&ws=!1m4!1m3!3m2!1steamia-prod-df3d!2sia_tjenester_metrikker)
 som heter `ia-tjenester-metrikker` i prosjektet `teamia-prod-df3d`.
 
+Generer datafortellingen lokalt ved å kjøre 
+```
+quarto render leverte_ia_tjenester/index.qmd
+```
+
 # Kontakt
 
 for henvendelser, opprett [issue her på GitHub](https://github.com/navikt/ia-datafortelling/issues).  
