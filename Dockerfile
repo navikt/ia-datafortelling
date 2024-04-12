@@ -50,7 +50,6 @@ RUN python3 -m venv /opt/venv
 COPY run.sh .
 COPY leverte_ia_tjenester/ /quarto/leverte_ia_tjenester/
 COPY common/ /quarto/common/
-COPY key_metrics/ /quarto/key_metrics/
 
 # Change the ownership of the "/quarto" directory to the "python" user and group.
 RUN chown python:python /quarto -R
