@@ -52,12 +52,26 @@ Generer datafortellingen lokalt ved å kjøre
 quarto render leverte_ia_tjenester/index.qmd
 ```
 
-# Kontakt
+# Oppdater avhengigheter
 
-for henvendelser, opprett [issue her på GitHub](https://github.com/navikt/ia-datafortelling/issues).  
-Ansatte i NAV-IT kan også kontake oss i Slack-kanalen #teamia
+- Oppdater python:
+  - Sjekk versjon i Dockerfile opp mot Python sin siste versjon [her](https://www.python.org/downloads/).
+  - Dersom kom ny versjon, lag et lokalt virtual miljø på nytt.
+- Oppdater python pakker:
+  - `pip3 install --upgrade pip`
+  - `pip3 install --upgrade <pakke>`
+  - Oppdater `requirements.txt` manuelt (eller bruk `pip3 freeze > requirements.txt`)
+  - Kjør datafortellingene lokalt på nytt og sammenlign med prod
 
-# Troubleshooting
+# Henvendelser
+
+Spørsmål knyttet til koden eller prosjektet kan stilles som et [issue her på GitHub](https://github.com/navikt/ia-datafortelling/issues).
+
+## For NAV-ansatte
+
+Interne henvendelser kan sendes via Slack i kanalen #team-pia.
+
+# Feilsøking
 
 > [!WARNING]
 > Feil: `google.auth.exceptions.DefaultCredentialsError`  
