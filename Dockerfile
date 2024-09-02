@@ -14,10 +14,11 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install the Quarto tool.
-RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.450/quarto-1.3.450-linux-amd64.tar.gz
-RUN tar -xvzf quarto-1.3.450-linux-amd64.tar.gz
-RUN ln -s quarto-1.3.450 quarto-dist
-RUN rm -rf quarto-1.3.450-linux-amd64.tar.gz
+RUN QUARTO_VERSION=1.4.553 && \
+    wget https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
+    tar -xvzf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
+    ln -s quarto-${QUARTO_VERSION} quarto-dist && \
+    rm -rf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz
 
 # Use a lightweight version of Python 3.11 in the final Docker image.
 FROM python:3.11-slim AS runner-image
