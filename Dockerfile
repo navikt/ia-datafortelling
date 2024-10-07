@@ -1,4 +1,4 @@
-FROM python:3.11 AS compile-image
+FROM python:3.12 AS compile-image
 
 # Create a virtual environment in which we install the Python packages described in the requirements file.
 RUN python3 -m venv /opt/venv
@@ -14,14 +14,14 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install the Quarto tool.
-RUN QUARTO_VERSION=1.4.553 && \
+RUN QUARTO_VERSION=1.5.57 && \
     wget https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
     tar -xvzf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz && \
     ln -s quarto-${QUARTO_VERSION} quarto-dist && \
     rm -rf quarto-${QUARTO_VERSION}-linux-amd64.tar.gz
 
 # Use a lightweight version of Python 3.11 in the final Docker image.
-FROM python:3.11-slim AS runner-image
+FROM python:3.12-slim AS runner-image
 
 #  Install the "curl" package.
 RUN apt-get update && apt-get install -yq --no-install-recommends \

@@ -15,14 +15,14 @@ i [Google Secret Manager](https://console.cloud.google.com/security/secret-manag
 
 ## Kom i gang
 
-Installer [python3.11](https://www.python.org/downloads/).
+Installer [python3.12](https://www.python.org/downloads/).
 
 Installer quarto ved å følge guiden på [på quarto sine nettsider](https://quarto.org/docs/get-started/).
 
 Som en god praksis, opprett et virtuelt pythonmiljø i root til prosjektet:
 
 ```
-python3.11 -m venv env && source env/bin/activate
+python3.12 -m venv env && source env/bin/activate
 ```
 
 Installer avhengigheter med
@@ -54,6 +54,14 @@ quarto render leverte_ia_tjenester/index.qmd
 
 # Oppdater avhengigheter
 
+## Oversikt fra Pia-hub:
+- Script for å finne pythonversjon brukt i
+  dockerfil https://github.com/navikt/pia-hub/blob/main/scripts/pythonversions.sh
+  - Oppdater pythonversjon om nødvendig
+- Script for å finne utdaterte pythonpakker https://github.com/navikt/pia-hub/blob/main/scripts/pythonpackageversions.sh
+  - Oppdater requirements.txt om nødvendig
+
+## Manuelt:
 - Oppdater python:
   - Sjekk versjon i Dockerfile opp mot Python sin siste versjon [her](https://www.python.org/downloads/).
   - Dersom kom ny versjon, lag et lokalt virtual miljø på nytt.
