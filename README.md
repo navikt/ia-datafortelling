@@ -65,6 +65,7 @@ quarto render leverte_ia_tjenester/index.qmd
 - Oppdater python:
   - Sjekk versjon i Dockerfile opp mot Python sin siste versjon [her](https://www.python.org/downloads/).
   - Dersom kom ny versjon, lag et lokalt virtual miljø på nytt.
+  - Kjør `python3.12 -m venv .venv` for å lage og kjør `source .venv/bin/activate` for å aktivere det.
 - Oppdater python pakker:
   - `pip3 install --upgrade pip`
   - `pip3 install --upgrade <pakke>`
