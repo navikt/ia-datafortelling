@@ -54,23 +54,18 @@ quarto render leverte_ia_tjenester/index.qmd
 
 # Oppdater avhengigheter
 
-## Oversikt fra Pia-hub:
-- Script for å finne pythonversjon brukt i
-  dockerfil https://github.com/navikt/pia-hub/blob/main/scripts/pythonversions.sh
-  - Oppdater pythonversjon om nødvendig
-- Script for å finne utdaterte pythonpakker https://github.com/navikt/pia-hub/blob/main/scripts/pythonpackageversions.sh
-  - Oppdater requirements.txt om nødvendig
+## Oppdater python:
+1. Sjekk versjon i Dockerfile opp mot Python sin siste versjon [her](https://www.python.org/downloads/).
+2. Dersom kom ny versjon, lag et lokalt virtual miljø på nytt.
+3. Kjør `python3.12 -m venv .venv` for å lage og kjør `source .venv/bin/activate` for å aktivere det.
 
-## Manuelt:
-- Oppdater python:
-  - Sjekk versjon i Dockerfile opp mot Python sin siste versjon [her](https://www.python.org/downloads/).
-  - Dersom kom ny versjon, lag et lokalt virtual miljø på nytt.
-  - Kjør `python3.12 -m venv .venv` for å lage og kjør `source .venv/bin/activate` for å aktivere det.
-- Oppdater python pakker:
-  - `pip3 install --upgrade pip`
-  - `pip3 install --upgrade <pakke>`
-  - Oppdater `requirements.txt` manuelt (eller bruk `pip3 freeze > requirements.txt`)
-  - Kjør datafortellingene lokalt på nytt og sammenlign med prod
+
+## Oppdater python pakker:
+1. Sørg for at du har installert avhengighetene i `requirements.txt` og at du har aktivert det virtuelle miljøet. Installer avhengigheter med: `pip3 install -r requirements.txt`
+2. Oppdater `pip` med `pip3 install --upgrade pip`
+3. Se etter utdaterte pakker med `pip3 list --outdated`
+4. Oppdater versjonstallet av de i requirements.txt
+5. kjør `pip3 install -r requirements.txt` på nytt og kjør datafortellingene lokalt og sjekk at alt fungerer som forventet.
 
 # Henvendelser
 
