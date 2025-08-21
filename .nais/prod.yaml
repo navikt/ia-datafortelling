@@ -33,8 +33,6 @@ spec:
       value: data.nav.no
     - name: LEVERTE_IA_TJENESTER_QUARTO_ID
       value: 15c12bb7-30b0-4dc2-9ef0-afc72c2a03d8
-    - name: KEY_METRICS_QUARTO_ID
-      value: 2f6249ef-67bc-4fe6-bd35-502f2e739c4e
   accessPolicy:
     outbound:
       external:

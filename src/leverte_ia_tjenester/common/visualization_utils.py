@@ -69,7 +69,8 @@ def create_bar_plot_with_button(
 
 
 def create_bar_plot(
-        series: pd.Series, label: str,
+    series: pd.Series,
+    label: str,
 ) -> Figure:
     fig = go.Figure()
 

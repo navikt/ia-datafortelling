@@ -101,22 +101,22 @@ def tilbakevendende_brukere(leverte_iatjenester: pd.DataFrame):
 
 
 def fordeling_antall_ansatte(leverte_iatjenester: pd.DataFrame) -> dict:
-    relevant_data = leverte_iatjenester[
-        ["orgnr", "antall_ansatte"]
-    ]
+    relevant_data = leverte_iatjenester[["orgnr", "antall_ansatte"]]
 
     bins = [0, 5, 10, 20, 50, 100, 100000]
     labels = ["0-4", "5-9", "10-19", "20-49", "50-99", "100+"]
 
-    return (pd.cut(
+    return (
+        pd.cut(
             x=relevant_data["antall_ansatte"],
             bins=bins,
             labels=labels,
             include_lowest=True,
             right=True,
         )
-            .value_counts()
-            .reindex(labels))
+        .value_counts()
+        .reindex(labels)
+    )
 
 
 def andel_tilbakevendende(

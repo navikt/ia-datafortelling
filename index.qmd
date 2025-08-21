@@ -17,7 +17,6 @@ format:
         toc: true
         toc-title: Indeks
         page-layout: full
-        embed-resources: true
         theme: minty
         grid:
           body-width: 1000px
@@ -43,8 +42,8 @@ Kildekoden finnes på [GitHub](https://github.com/navikt/ia-datafortelling).
 import sys
 sys.path.append('..')
 
-from data_prepping import prep_data
-from common.data_fetching import query_data
+from leverte_ia_tjenester.data_prepping import prep_data
+from leverte_ia_tjenester.common.data_fetching import query_data
 
 PROJECT = "teamia-prod-df3d"
 DATASET = "ia_tjenester_metrikker"
@@ -56,18 +55,18 @@ data = prep_data(raw_data)
 
 # Unike virksomheter
 ```{python}
-from plots import unike_virksomheter_bulletlist
+from leverte_ia_tjenester.plots import unike_virksomheter_bulletlist
 unike_virksomheter_bulletlist(data)
 ```
 
 ```{python}
-from plots import plot_unike_bedrifter
+from leverte_ia_tjenester.plots import plot_unike_bedrifter
 plot_unike_bedrifter(data)
 ```
 
 ## Kumulativt historgram av unike virksomheter
 ```{python}
-from plots import plot_antall_unike_virksomheter_kumulativt
+from leverte_ia_tjenester.plots import plot_antall_unike_virksomheter_kumulativt
 plot_antall_unike_virksomheter_kumulativt(data)
 ```
 
@@ -75,7 +74,7 @@ plot_antall_unike_virksomheter_kumulativt(data)
 Grafen kategoriserer virksomheter ut i fra hvor mange ansatte de har. En virksomhet man maksimalt få ett treff per dag.
 
 ```{python}
-from plots import plot_fordeling_antall_ansatte
+from leverte_ia_tjenester.plots import plot_fordeling_antall_ansatte
 plot_fordeling_antall_ansatte(data)
 ```
 
@@ -86,6 +85,6 @@ kvartalet etter. Dette gir en indikasjon på hvor mange av virksomhetene som job
 systematisk med IA.
 
 ```{python}
-from plots import plot_tilbakevendende_brukere
+from leverte_ia_tjenester.plots import plot_tilbakevendende_brukere
 plot_tilbakevendende_brukere(data)
 ```

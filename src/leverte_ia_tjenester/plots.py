@@ -1,10 +1,11 @@
 import pandas as pd
 from plotly.graph_objs import Figure
 
-from common.visualization_utils import (
+from leverte_ia_tjenester.common.visualization_utils import (
     create_bar_plot_with_button,
     create_cumulative_histogram,
-    create_table, create_bar_plot,
+    create_table,
+    create_bar_plot,
 )
 
 
@@ -26,10 +27,7 @@ def plot_unike_bedrifter(data: pd.DataFrame):
 
 def plot_fordeling_antall_ansatte(data: pd.DataFrame) -> Figure:
     antall_ansatte = data["fordeling_antall_ansatte"]
-    return create_bar_plot(
-        antall_ansatte,
-        label="summy"
-    )
+    return create_bar_plot(antall_ansatte, label="summy")
 
 
 def plot_tilbakevendende_brukere(data: pd.DataFrame) -> Figure:
