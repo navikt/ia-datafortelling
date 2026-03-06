@@ -1,10 +1,10 @@
-ARG PYTHON_VERSION=3.13.12
+ARG PYTHON_VERSION=3.14.3
 
 FROM python:${PYTHON_VERSION} AS compile-image
 
-ENV CPU=amd64
+#ENV CPU=amd64
 # for å bygge for Apple Silicon Mac til local kjøring:
-#ENV CPU=arm64
+ENV CPU=arm64
 
 RUN apt-get update \
     && apt-get install -yq --no-install-recommends curl jq \
