@@ -1,21 +1,18 @@
 ARG PYTHON_VERSION=3.13.7
 
-FROM python:${PYTHON_VERSION} AS compile-image
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:${PYTHON_VERSION}-dev AS builder
+USER root
 
-ENV CPU=amd64
-# for å bygge for Apple Silicon Mac til local kjøring:
-# ENV CPU=arm64
+# for å bygge for Apple Silicon Mac til local kjøring, sett CPU=arm64
+ARG CPU=amd64
 
-RUN apt-get update \
-    && apt-get install -yq --no-install-recommends curl jq \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl jq wget
 
 RUN QUARTO_VERSION=$(curl https://api.github.com/repos/quarto-dev/quarto-cli/releases/latest | jq '.tag_name' | sed -e 's/[\"v]//g') && \
     wget https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-${CPU}.tar.gz && \
     tar -xvzf quarto-${QUARTO_VERSION}-linux-${CPU}.tar.gz && \
-    ln -s quarto-${QUARTO_VERSION} quarto-dist && \
-    rm -rf quarto-${QUARTO_VERSION}-linux-${CPU}.tar.gz
+    rm -rf quarto-${QUARTO_VERSION}-linux-${CPU}.tar.gz && \
+    mv quarto-${QUARTO_VERSION} /quarto
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
@@ -26,26 +23,23 @@ COPY src/ src/
 
 RUN uv sync --frozen --no-dev --compile-bytecode
 
-FROM python:${PYTHON_VERSION}-slim AS runner-image
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:${PYTHON_VERSION}-dev AS runner
+USER root
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
+COPY --from=builder /quarto /quarto
+RUN ln -s /quarto/bin/quarto /usr/local/bin/quarto
+
+RUN apk add --no-cache curl
+
+RUN addgroup -g 1069 python && \
+    adduser -D -u 1069 -G python python
+
 WORKDIR /home/python
 
-RUN apt-get update \
-    && apt-get install -yq --no-install-recommends curl \
-    && apt-get upgrade -y curl \
-    && apt-get purge -y imagemagick git-man golang libexpat1-dev \
-    && apt-get -y autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN groupadd -g 1069 python && \
-    useradd -r -u 1069 -g python python
-
-COPY --from=compile-image ./.venv ./.venv
-COPY --from=compile-image /quarto-dist ./quarto-dist
-RUN ln -s /home/python/quarto-dist/bin/quarto /usr/local/bin/quarto
+COPY --from=builder ./.venv ./.venv
 
 ENV PATH="/home/python/.venv/bin:$PATH" \
     QUARTO_PYTHON="/home/python/.venv/bin/python" \
@@ -62,7 +56,5 @@ COPY main.py .
 COPY src/ /src
 
 RUN chown python:python /home/python -R
-
-USER 1069
-
+USER python
 ENTRYPOINT ["python",  "main.py"]
