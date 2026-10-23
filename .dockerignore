@@ -1,0 +1,7 @@
+.git
+.github
+.nav-pilot
+.venv
+tests
+.env*
+*.md

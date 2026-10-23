@@ -113,6 +113,13 @@ Velg "Trigger run" fra [NAIS console](https://console.nav.cloud.nais.io/team/pia
 
 # Vedlikehold og videreutvikling
 
+## Tester og deploy
+Kjør `uv lock --check` og `uv run pytest` før push. Smoke-testen bruker tre syntetiske rader og krever ikke tilgang til BigQuery.
+
+Push til `upgrade-avhengigheter-okt-2026` kjører tester og et lokalt Docker-bygg i CI. Imaget pushes ikke, og branchen deployer ikke. Pull requests kjører tester; push til `main` kjører tester før image-bygg og deploy til den eksisterende prod-jobben.
+
+Etter deploy til prod: Sjekk jobbloggene for vellykket Quarto-rendering og NADA-opplasting, og kontroller at den eksisterende Quarto-siden er oppdatert. Jobbens exitkode alene er ikke nok som kontroll, siden `main.py` fanger feil. Ved feil deployer teamet forrige fungerende image til samme jobb.
+
 ## Oppdatering av avhengigheter
 1. Se etter utdaterte avhengigheter med: `uv tree --outdated --depth 1` 
 2. Oppdater disse avhengighetene i [pyproject.toml](pyproject.toml) til nyeste versjon.
