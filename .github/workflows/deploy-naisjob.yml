@@ -5,24 +5,53 @@ on:
   push:
     branches:
       - main
+      - upgrade-avhengigheter-okt-2026
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  smoke-test:
+    name: Test med syntetiske data
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+      - run: uv sync --frozen && uv lock --check && uv run pytest
+
+  docker-build-smoke:
+    name: Bygg Docker-image uten deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/upgrade-avhengigheter-okt-2026'
+    needs: smoke-test
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: docker build --tag ia-datafortelling:ci .
+
   docker-build-push:
-    name: Build, test and push docker image
+    name: Build and push docker image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: smoke-test
     permissions:
       contents: read
       id-token: write
       packages: write
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Push to Google Artifact Registry
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@dd7421d5068057a020ca46ead966c26190c516b1 # v0
         id: docker-push
         with:
           team: teamia
@@ -31,14 +60,16 @@ jobs:
 
   deploy-naisjob-to-prod:
     permissions:
+      contents: read
       id-token: write
     name: Deploy to prod-gcp
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: docker-build-push
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: nais/deploy/actions/deploy@f93637de5533a1bb573f940ceb7527a5b3b0dea0 # v2
         env:
           CLUSTER: prod-gcp
           IMAGE: ${{ needs.docker-build-push.outputs.image }}
@@ -46,15 +77,16 @@ jobs:
 
   trivy-scan:
     name: Scanner docker image med Trivy
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: docker-build-push
     permissions:
-      contents: read # to write sarif
+      contents: read
       security-events: write # push sarif to GitHub security
       id-token: write # for nais/login
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: navikt/pia-actions/trivy-scan@v1 # https://github.com/navikt/pia-actions/tree/main/trivy-scan
+      - uses: navikt/pia-actions/trivy-scan@3a25392823d2c6c7fbd6b9213b639e28b8e543a2 # v1
         with:
           image: ${{ needs.docker-build-push.outputs.image }}
           team: teamia
