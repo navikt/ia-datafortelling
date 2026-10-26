@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           enable-cache: true
       - run: uv sync --frozen && uv lock --check && uv run pytest
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: navikt/pia-actions/trivy-scan@3a25392823d2c6c7fbd6b9213b639e28b8e543a2 # v1
+      - uses: navikt/pia-actions/trivy-scan@ea9f43f25bc2f188d474b00c3041b3f3b4d0e541 # v1.1.16
         with:
           image: ${{ needs.docker-build-push.outputs.image }}
           team: teamia
