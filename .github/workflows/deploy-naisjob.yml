@@ -7,6 +7,10 @@ on:
       - main
       - upgrade-avhengigheter-okt-2026
   pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+      timezone: Europe/Oslo
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,7 +44,7 @@ jobs:
 
   docker-build-push:
     name: Build and push docker image
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: smoke-test
     permissions:
       contents: read
@@ -63,7 +67,7 @@ jobs:
       contents: read
       id-token: write
     name: Deploy to prod-gcp
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: docker-build-push
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -77,7 +81,7 @@ jobs:
 
   trivy-scan:
     name: Scanner docker image med Trivy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: docker-build-push
     permissions:
       contents: read
