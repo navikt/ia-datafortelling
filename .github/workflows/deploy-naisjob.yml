@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - upgrade-avhengigheter-okt-2026
+      - patch-dependabot-2026-11-26
   pull_request:
   workflow_dispatch:
   schedule:
@@ -32,7 +32,7 @@ jobs:
 
   docker-build-smoke:
     name: Bygg Docker-image uten deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/upgrade-avhengigheter-okt-2026'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/patch-dependabot-2026-11-26'
     needs: smoke-test
     permissions:
       contents: read
